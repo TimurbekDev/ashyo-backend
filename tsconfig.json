@@ -11,7 +11,9 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@config": ["./src/config"]
+      "@config": ["./src/config"],
+      "@prisma": ["./src/prisma"],
+      "@modules": ["./src/modules"]
     },
     "incremental": true,
     "skipLibCheck": true,
