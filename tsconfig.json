@@ -13,6 +13,7 @@
     "paths": {
       "@config": ["./src/config"],
       "@prisma": ["./src/prisma"],
+      "@modules": ["./src/modules"]
     },
     "incremental": true,
     "skipLibCheck": true,
