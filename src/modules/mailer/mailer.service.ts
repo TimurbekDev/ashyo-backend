@@ -10,7 +10,7 @@ export class MailerCustomService {
     @Inject(MailerService) private mailerService: MailerService,
   ) {}
 
-  async sendMail(payload: ISendMailPayload): Promise<void> {
+  async sendOTP(payload: ISendMailPayload): Promise<void> {
 
     try {
       await this.mailerService.sendMail({
@@ -21,7 +21,7 @@ export class MailerCustomService {
           <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; text-align: center;">
             <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
               <img src="https://i.imgur.com/NIJKjMe.png" alt="Logo" style="width: 50px; margin-bottom: 20px;" />
-              <h1 style="font-size: 24px; color: #333333;">Verify your sign-up</h1>
+              <h1 style="font-size: 24px; color: #333333;">${payload.subject}</h1>
               <p style="color: #666666; font-size: 16px;">We have received a sign-up attempt with the following code. Please enter it in the browser window where you started signing up.</p>
               <div style="background: #f4f4f4; padding: 15px; border-radius: 4px; font-size: 32px; font-weight: bold; margin: 20px 0; color: #333333;">
                 ${payload.text}
