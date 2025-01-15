@@ -10,6 +10,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 
 import { CheckAuthGuard } from './guards/check-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { SeedsModule } from './seeds';
 
 
 @Module({
@@ -47,7 +48,8 @@ import { APP_GUARD } from '@nestjs/core';
     PrismaModule,
     UsersModule,
     JwtCustomModule,
-    AuthModule
+    AuthModule,
+    SeedsModule
   ],
   providers: [
     {

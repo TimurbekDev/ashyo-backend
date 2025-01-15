@@ -15,7 +15,7 @@ export class SeedsService implements OnModuleInit {
     }
 
     async seedUsers(): Promise<void> {
-        const usersCount = await this.prismaService.user.count()
+        const usersCount = await this.prismaService.user.count();
 
         if (usersCount == 0) {
             await this.prismaService.user.create({
