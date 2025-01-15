@@ -15,6 +15,7 @@
       "@prisma": ["./src/prisma"],
       "@modules": ["./src/modules"],
       "@decorators": ["./src/decorators"],
+      "@filters": ["./src/filters"],
     },
     "incremental": true,
     "skipLibCheck": true,
