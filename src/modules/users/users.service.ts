@@ -5,10 +5,15 @@ import { PrismaService } from '@prisma';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import * as fs from "fs"
+import { MailerCustomService } from '../mailer/mailer.service';
+
 
 @Injectable()
 export class UsersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private mailer: MailerCustomService,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const existsUser = await this.prisma.user.findUnique({
