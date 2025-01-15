@@ -16,7 +16,6 @@ export class AuthService {
     @Inject(JwtCustomService) private jwtCustomService: JwtCustomService,
     // @Inject(RedisService) private redisService: RedisService,
     // @Inject(MailerCustomService) private mailerService: MailerCustomService,
-    // @Inject(DevicesService) private deviceService: DevicesService,
   ) { }
 
   async signUp(payload: ISignUpRequest) {
