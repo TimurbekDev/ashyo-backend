@@ -11,6 +11,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { CheckAuthGuard } from './guards/check-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { SeedsModule } from './seeds';
+import { UploadModule } from './modules/upload';
 
 
 @Module({
@@ -49,7 +50,8 @@ import { SeedsModule } from './seeds';
     UsersModule,
     JwtCustomModule,
     AuthModule,
-    SeedsModule
+    SeedsModule,
+    UploadModule
   ],
   providers: [
     {
