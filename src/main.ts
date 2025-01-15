@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AllExceptionFilter } from '@filters';
 
 async function startApp() {
   const app = await NestFactory.create(AppModule, {
@@ -19,8 +20,11 @@ async function startApp() {
       description: 'Enter JWT token',
     }, 'auth')
     .build();
+    
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
+
+  app.useGlobalFilters(new AllExceptionFilter)
 
   const configService = app.get(ConfigService);
 
