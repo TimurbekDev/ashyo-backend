@@ -13,6 +13,11 @@ import { APP_GUARD } from '@nestjs/core';
 import { SeedsModule } from './seeds';
 import { UploadModule } from './modules/upload';
 import { ProductModule } from './modules/product/product.module';
+import { ProductItemModule } from './modules/product-item/product-item.module';
+import { RegionModule } from './modules/region';
+import { CartModule } from './modules/cart';
+import { AddressModule } from './modules/address';
+import { BrandModule } from './modules/brand';
 
 
 @Module({
@@ -55,13 +60,18 @@ import { ProductModule } from './modules/product/product.module';
     CategoryModule,
     ProductModule,
     VarationModule,
-    VarationOptionModule
+    VarationOptionModule,
+    ProductItemModule,
+    RegionModule,
+    CartModule,
+    AddressModule,
+    BrandModule
   ],
   providers: [
-    {
-      useClass: CheckAuthGuard,
-      provide: APP_GUARD
-    }
+    // {
+    //   useClass: CheckAuthGuard,
+    //   provide: APP_GUARD
+    // }
   ]
 })
 export class AppModule { }
