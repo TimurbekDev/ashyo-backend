@@ -20,7 +20,7 @@ export class ProductService {
     });
 
     return {
-      message: 'Varation Option created',
+      message: 'Product created',
       product: product
     };
   }
@@ -29,7 +29,7 @@ export class ProductService {
 
     const products = await this.prismaService.product.findMany();
     return {
-      message: 'All varation options retrieved',
+      message: 'All Productss retrieved',
       products: products
     };
   }
@@ -39,10 +39,10 @@ export class ProductService {
     const products = await this.prismaService.product.findFirst({ where: { id } });
 
     if (!products)
-      throw new NotFoundException('Varation Options not found');
+      throw new NotFoundException('Product not found');
 
     return {
-      message: 'Varation Option found',
+      message: 'Product found',
       product: products
     };;
   }

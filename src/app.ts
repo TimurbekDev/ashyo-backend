@@ -12,6 +12,7 @@ import { CheckAuthGuard } from './guards/check-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { SeedsModule } from './seeds';
 import { UploadModule } from './modules/upload';
+import { ProductModule } from './modules/product/product.module';
 
 
 @Module({
@@ -52,6 +53,7 @@ import { UploadModule } from './modules/upload';
     JwtCustomModule,
     SeedsModule,
     CategoryModule,
+    ProductModule,
     VarationModule,
     VarationOptionModule
   ],
