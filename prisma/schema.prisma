@@ -72,22 +72,44 @@ model VarationOption {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
-  name        String   @unique
+  id          Int           @id @default(autoincrement())
+  name        String        @unique
   description String
-  category    Category @relation("ProductCategory", fields: [categoryId], references: [id])
+  category    Category      @relation("ProductCategory", fields: [categoryId], references: [id])
   categoryId  Int
   image       String
+  ProductItem ProductItem[] @relation("ProductProductItem")
 }
 
 model Cart {
-  id     Int  @id @default(autoincrement())
-  user   User @relation("UserCart", fields: [userId], references: [id])
-  userId Int
+  id       Int        @id @default(autoincrement())
+  user     User       @relation("UserCart", fields: [userId], references: [id])
+  userId   Int
+  CartItem CartItem[] @relation("CartCartItem")
 }
 
 model Brend {
   id    Int    @id @default(autoincrement())
   name  String
   image String
+}
+
+model ProductItem {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  product   Product    @relation("ProductProductItem", fields: [productId], references: [id])
+  productId Int
+  image     String
+  quantity  Int
+  price     Float
+  CartItem  CartItem[] @relation("CartProductItem")
+}
+
+model CartItem {
+  id            Int         @id @default(autoincrement())
+  cart          Cart        @relation("CartCartItem", fields: [cartId], references: [id])
+  cartId        Int
+  productItem   ProductItem @relation("CartProductItem", fields: [productItemId], references: [id])
+  productItemId Int
+  count         Int
 }
