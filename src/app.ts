@@ -1,5 +1,5 @@
 import { appConfig, jwtConfig } from '@config';
-import { AuthModule, JwtCustomModule, UsersModule, VarationModule } from '@modules';
+import { AuthModule, CategoryModule, JwtCustomModule, UsersModule, VarationModule } from '@modules';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaModule } from '@prisma';
@@ -47,10 +47,12 @@ import { UploadModule } from './modules/upload';
     }
   ),
     PrismaModule,
+    AuthModule,
     UsersModule,
     JwtCustomModule,
-    AuthModule,
-    SeedsModule
+    SeedsModule,
+    CategoryModule,
+    VarationModule
   ],
   providers: [
     {

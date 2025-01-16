@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { VarationService } from './varation.service';
 import { CreateVarationDto } from './dto/create-varation.dto';
 import { UpdateVarationDto } from './dto/update-varation.dto';
@@ -21,12 +21,12 @@ export class VarationController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
+  findOne(@Param('id',ParseIntPipe) id: number) {
     return this.varationService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: number, @Body() updateVarationDto: UpdateVarationDto) {
+  update(@Param('id',ParseIntPipe) id: number, @Body() updateVarationDto: UpdateVarationDto) {
     return this.varationService.update({
       id,
       name: updateVarationDto.name,
@@ -35,7 +35,7 @@ export class VarationController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  remove(@Param('id',ParseIntPipe) id: number) {
     return this.varationService.remove(id);
   }
 }
