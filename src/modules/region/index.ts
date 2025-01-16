@@ -1,0 +1,5 @@
+export * from './interfaces'
+export * from './region.service'
+export * from './dto'
+export * from './region.controller'
+export * from './region.module'
