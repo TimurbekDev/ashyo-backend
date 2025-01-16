@@ -41,6 +41,7 @@ model User {
   password  String
   addresses Address[]
   role      Roles     @default(User)
+  Cart      Cart[]    @relation("UserCart")
 }
 
 model Category {
@@ -52,11 +53,41 @@ model Category {
   parentId Int?
   children Category[] @relation("ParentCategory")
   Varation Varation[] @relation("Category")
+  Product  Product[]  @relation("ProductCategory")
 }
 
 model Varation {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique
+  category       Category         @relation("Category", fields: [categoryId], references: [id])
+  categoryId     Int
+  VarationOption VarationOption[] @relation("Varation")
+}
+
+model VarationOption {
   id         Int      @id @default(autoincrement())
-  name       String   @unique
-  category   Category @relation("Category", fields: [categoryId], references: [id])
-  categoryId Int
+  value      String
+  varation   Varation @relation("Varation", fields: [varationId], references: [id])
+  varationId Int
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String
+  category    Category @relation("ProductCategory", fields: [categoryId], references: [id])
+  categoryId  Int
+  image       String
+}
+
+model Cart {
+  id     Int  @id @default(autoincrement())
+  user   User @relation("UserCart", fields: [userId], references: [id])
+  userId Int
+}
+
+model Brend {
+  id    Int    @id @default(autoincrement())
+  name  String
+  image String
 }

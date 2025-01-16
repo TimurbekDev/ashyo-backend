@@ -11,9 +11,6 @@ export class CategoryService {
 
   async create(payload: ICreateCategoryRequest): Promise<ICategoryResponse> {
 
-    console.log(payload);
-
-
     if (payload.parentId)
       await this.findOne(payload.parentId);
 

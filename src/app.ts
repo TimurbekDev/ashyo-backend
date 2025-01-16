@@ -1,5 +1,5 @@
 import { appConfig, jwtConfig } from '@config';
-import { AuthModule, CategoryModule, JwtCustomModule, UsersModule, VarationModule } from '@modules';
+import { AuthModule, CategoryModule, JwtCustomModule, UsersModule, VarationModule, VarationOptionModule } from '@modules';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaModule } from '@prisma';
@@ -18,7 +18,7 @@ import { UploadModule } from './modules/upload';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig,mailerConfig,jwtConfig]
+      load: [appConfig, mailerConfig, jwtConfig]
 
     }),
 
@@ -38,21 +38,22 @@ import { UploadModule } from './modules/upload';
     }),
     ServeStaticModule.forRoot(
       {
-      rootPath: "./uploads",
-      serveRoot: "/files"
-    },
-    {
-      rootPath: "./public",
-      serveRoot: "/public"
-    }
-  ),
+        rootPath: "./uploads",
+        serveRoot: "/files"
+      },
+      {
+        rootPath: "./public",
+        serveRoot: "/public"
+      }
+    ),
     PrismaModule,
     AuthModule,
     UsersModule,
     JwtCustomModule,
     SeedsModule,
     CategoryModule,
-    VarationModule
+    VarationModule,
+    VarationOptionModule
   ],
   providers: [
     {
