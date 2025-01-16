@@ -65,10 +65,11 @@ model Varation {
 }
 
 model VarationOption {
-  id         Int      @id @default(autoincrement())
-  value      String
-  varation   Varation @relation("Varation", fields: [varationId], references: [id])
-  varationId Int
+  id             Int              @id @default(autoincrement())
+  value          String
+  varation       Varation         @relation("Varation", fields: [varationId], references: [id])
+  varationId     Int
+  ProductOptions ProductOptions[] @relation("ProductItemVO")
 }
 
 model Product {
@@ -95,14 +96,15 @@ model Brend {
 }
 
 model ProductItem {
-  id        Int        @id @default(autoincrement())
-  name      String     @unique
-  product   Product    @relation("ProductProductItem", fields: [productId], references: [id])
-  productId Int
-  image     String
-  quantity  Int
-  price     Float
-  CartItem  CartItem[] @relation("CartProductItem")
+  id             Int              @id @default(autoincrement())
+  name           String           @unique
+  product        Product          @relation("ProductProductItem", fields: [productId], references: [id])
+  productId      Int
+  image          String
+  quantity       Int
+  price          Float
+  CartItem       CartItem[]       @relation("CartProductItem")
+  ProductOptions ProductOptions[] @relation("ProductItemPO")
 }
 
 model CartItem {
@@ -112,4 +114,12 @@ model CartItem {
   productItem   ProductItem @relation("CartProductItem", fields: [productItemId], references: [id])
   productItemId Int
   count         Int
+}
+
+model ProductOptions {
+  id              Int            @id @default(autoincrement())
+  productItem     ProductItem    @relation("ProductItemPO", fields: [productItemId], references: [id])
+  variantOption   VarationOption @relation("ProductItemVO", fields: [variantOptionId], references: [id])
+  productItemId   Int
+  variantOptionId Int
 }
