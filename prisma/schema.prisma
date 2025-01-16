@@ -42,3 +42,21 @@ model User {
   addresses Address[]
   role      Roles     @default(User)
 }
+
+model Category {
+  id       Int        @id @default(autoincrement())
+  name     String     @unique
+  icon     String?
+  image    String?
+  parent   Category?  @relation("ParentCategory", fields: [parentId], references: [id])
+  parentId Int?
+  children Category[] @relation("ParentCategory")
+  Varation Varation[] @relation("Category")
+}
+
+model Varation {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  category   Category @relation("Category", fields: [categoryId], references: [id])
+  categoryId Int
+}
