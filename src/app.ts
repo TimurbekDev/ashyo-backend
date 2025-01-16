@@ -1,5 +1,5 @@
 import { appConfig, jwtConfig } from '@config';
-import { AuthModule, CategoryModule, JwtCustomModule, UsersModule, VarationModule, VarationOptionModule } from '@modules';
+import { AddressModule, AuthModule, CartModule, CategoryModule, JwtCustomModule, RegionModule, ReviewModule, UsersModule, VarationModule, VarationOptionModule } from '@modules';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaModule } from '@prisma';
@@ -11,7 +11,6 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { CheckAuthGuard } from './guards/check-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { SeedsModule } from './seeds';
-import { UploadModule } from './modules/upload';
 import { ProductModule } from './modules/product/product.module';
 
 
@@ -55,7 +54,11 @@ import { ProductModule } from './modules/product/product.module';
     CategoryModule,
     ProductModule,
     VarationModule,
-    VarationOptionModule
+    VarationOptionModule,
+    ReviewModule,
+    AddressModule,
+    RegionModule,
+    CartModule  
   ],
   providers: [
     {
