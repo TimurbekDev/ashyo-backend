@@ -1,22 +1,22 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma';
-import { CartService } from '../cart';
 import { ICreateOrderRequest, IUpdateOrderRequest } from './interfaces';
 import { IOrderResponse } from './interfaces/order-response.interface';
 import { AddressService } from '../address';
+import { UserService } from '../user';
 
 @Injectable()
 export class OrderService {
 
   constructor(
     @Inject(PrismaService) private readonly prismaService: PrismaService,
-    @Inject(CartService) private readonly cartService: CartService,
+    @Inject(UserService) private readonly userService: UserService,
     @Inject(AddressService) private readonly adressService: AddressService
   ) { }
 
   async create(payload: ICreateOrderRequest): Promise<IOrderResponse> {
 
-    await this.cartService.findOne(payload.cartId);
+    await this.userService.findOne(payload.userId);
     await this.adressService.findOne(payload.adressId);
 
     const order = await this.prismaService.order.create({
@@ -54,9 +54,6 @@ export class OrderService {
   async update(payload: IUpdateOrderRequest): Promise<IOrderResponse> {
 
     await this.findOne(payload.id);
-
-    if (payload.adressId)
-      await this.adressService.findOne(payload.adressId);
 
     const order = await this.prismaService.order.update({
       where: { id: payload.id },
