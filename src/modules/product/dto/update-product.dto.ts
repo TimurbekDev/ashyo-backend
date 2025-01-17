@@ -33,6 +33,15 @@ export class UpdateProductDto implements Omit<IUpdateProductRequest, 'id'> {
     categoryId: number;
 
     @ApiProperty({
+        description: 'Brend Id',
+        default: 1,
+        required: true
+    })
+    @IsOptional()
+    @IsNumber()
+    brendId: number;
+
+    @ApiProperty({
         type: 'string',
         required: true,
         format: 'binary',

@@ -1,16 +1,24 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { ICreateAddressRequest, IUpdateAddressRequest } from './interfaces';
+import { IAddressResponse, ICreateAddressRequest, IUpdateAddressRequest } from './interfaces';
 import { PrismaService } from '@prisma';
-import { Address,} from '@prisma/client';
+import { Address, } from '@prisma/client';
+import { RegionService } from '../region';
+import { UserService } from '../user';
 
 @Injectable()
 export class AddressService {
 
   constructor(
-    @Inject(PrismaService) private readonly prismaService: PrismaService
+    @Inject(PrismaService) private readonly prismaService: PrismaService,
+    @Inject(RegionService) private readonly regionService: RegionService,
+    @Inject(UserService) private readonly userService: UserService,
   ) { }
 
-  async create(payload: ICreateAddressRequest): Promise<{ message: string, address: Address }> {
+  async create(payload: ICreateAddressRequest): Promise<IAddressResponse> {
+
+    await this.regionService.findOne(payload.cityId);
+    await this.regionService.findOne(payload.villageId);
+    await this.userService.findOne(payload.userId);
 
     const newaddress = await this.prismaService.address.create({
       data: payload
@@ -22,7 +30,7 @@ export class AddressService {
     };
   }
 
-  async findAll(): Promise<{ message: string, address: Address[] }> {
+  async findAll(): Promise<IAddressResponse> {
 
     const allAddress = await this.prismaService.address.findMany({
       include: {
@@ -34,14 +42,11 @@ export class AddressService {
 
     return {
       message: 'Return all address',
-      address: allAddress
+      addresses: allAddress
     };
   }
 
-  async findOne(id: number): Promise<{
-    message: string,
-    address: Address
-  }> {
+  async findOne(id: number): Promise<IAddressResponse> {
     const address = await this.prismaService.address.findUnique({
       where: { id }
     });
@@ -52,7 +57,7 @@ export class AddressService {
     };
   }
 
-  async update(payload: IUpdateAddressRequest): Promise<{ message: string, address: Address }> {
+  async update(payload: IUpdateAddressRequest): Promise<IAddressResponse> {
     const address = await this.prismaService.address.findFirst({ where: { id: payload.id } });
 
     if (!address) {

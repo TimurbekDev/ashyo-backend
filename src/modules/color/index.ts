@@ -1,0 +1,5 @@
+export * from './interfaces'
+export * from './color.service'
+export * from './dto'
+export * from './color.controller'
+export * from './color.module'
