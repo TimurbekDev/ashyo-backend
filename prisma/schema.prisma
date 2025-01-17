@@ -7,7 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 //Modellar
 
 model Region {
@@ -72,16 +71,17 @@ model VarationOption {
 }
 
 model Product {
-  id          Int           @id @default(autoincrement())
-  name        String        @unique
-  description String
-  category    Category      @relation("ProductCategory", fields: [categoryId], references: [id])
-  categoryId  Int
-  image       String
-  ProductItem ProductItem[] @relation("ProductProductItem")
-  Review      Review[]      @relation("ProductRe")
-  brend       Brend         @relation(fields: [brendId], references: [id])
-  brendId     Int
+  id             Int              @id @default(autoincrement())
+  name           String           @unique
+  description    String
+  category       Category         @relation("ProductCategory", fields: [categoryId], references: [id])
+  categoryId     Int
+  image          String
+  ProductItem    ProductItem[]    @relation("ProductProductItem")
+  Review         Review[]         @relation("ProductRe")
+  brend          Brend            @relation(fields: [brendId], references: [id])
+  brendId        Int
+  ProductOptions ProductOptions[] @relation("ProductPO")
 }
 
 model Cart {
@@ -104,16 +104,15 @@ model Review {
 //tepadagilar bajarilgan
 
 model ProductItem {
-  id             Int              @id @default(autoincrement())
-  name           String           @unique
-  product        Product          @relation("ProductProductItem", fields: [productId], references: [id])
-  productId      Int
-  image          String
-  quantity       Int
-  price          Float
-  CartItem       CartItem[]       @relation("CartProductItem")
-  ProductOptions ProductOptions[] @relation("ProductItemPO")
-  ColorOptions   ColorOptions[]   @relation("ProductOption")
+  id           Int            @id @default(autoincrement())
+  name         String         @unique
+  product      Product        @relation("ProductProductItem", fields: [productId], references: [id])
+  productId    Int
+  image        String
+  quantity     Int
+  price        Float
+  CartItem     CartItem[]     @relation("CartProductItem")
+  ColorOptions ColorOptions[] @relation("ProductOption")
 }
 
 model CartItem {
@@ -125,7 +124,6 @@ model CartItem {
   count         Int
 }
 
-
 model Order {
   id       Int         @id @default(autoincrement())
   cart     Cart        @relation("CartOrder", fields: [cartId], references: [id])
@@ -135,14 +133,12 @@ model Order {
   status   OrderStatus @default(Pending)
 }
 
-
 model Color {
   id           Int            @id @default(autoincrement())
   name         String
   code         String
   ColorOptions ColorOptions[] @relation("ColorOption")
 }
-
 
 model Brend {
   id      Int       @id @default(autoincrement())
@@ -151,17 +147,16 @@ model Brend {
   Product Product[]
 }
 
-
 //Pastdagilar bajarilishi shart emas
 
 model ProductOptions {
-  id              Int            @id @default(autoincrement())
-  productItem     ProductItem    @relation("ProductItemPO", fields: [productItemId], references: [id])
   variantOption   VarationOption @relation("ProductItemVO", fields: [variantOptionId], references: [id])
-  productItemId   Int
+  product         Product        @relation("ProductPO", fields: [productId], references: [id])
+  productId       Int
   variantOptionId Int
-}
 
+  @@id([productId, variantOptionId])
+}
 
 model ColorOptions {
   id            Int         @id @default(autoincrement())
@@ -170,7 +165,6 @@ model ColorOptions {
   colorId       Int
   productItemId Int
 }
-
 
 enum OrderStatus {
   Delivered
