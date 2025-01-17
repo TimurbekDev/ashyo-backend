@@ -45,15 +45,17 @@ export class UploadService {
   }
 
   async deleteFile(payload: RemoveFileRequest): Promise<RemoveFileResponse> {
-    const filePath = path.join(__dirname, '../../../', payload.fileName);
-
+    const filePath = path.join(__dirname, '../../../uploads/', payload.fileName);
+  
     if (!existsSync(filePath)) {
+      console.log(filePath)
       throw new Error('File does not exist');
     }
 
     try {
       await fs.unlink(filePath);
     } catch (error) {
+      console.log(error)
       throw new Error('Error deleting file: ' + error.message);
     }
 
@@ -62,3 +64,5 @@ export class UploadService {
     };
   }
 }
+// C:\Users\Nodirbek Savbatov\OneDrive\Рабочий стол\ashyo-backend\brands\image-1737046062146-834267334.png
+// C:\Users\Nodirbek Savbatov\OneDrive\Рабочий стол\ashyo-backend\uploads\brands\image-1737046062146-834267334.png
