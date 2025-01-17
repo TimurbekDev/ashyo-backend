@@ -73,18 +73,17 @@ model VarationOption {
 }
 
 model Product {
-  id             Int              @id @default(autoincrement())
-  name           String           @unique
-  description    String
-  category       Category         @relation("ProductCategory", fields: [categoryId], references: [id])
-  categoryId     Int
-  image          String
-  ProductItem    ProductItem[]    @relation("ProductProductItem")
-  Review         Review[]         @relation("ProductRe")
-  brend          Brend            @relation(fields: [brendId], references: [id])
-  brendId        Int
-  ProductOptions ProductOptions[] @relation("ProductPO")
-  Like           Like[]           @relation("ProductLike")
+  id          Int           @id @default(autoincrement())
+  name        String        @unique
+  description String
+  category    Category      @relation("ProductCategory", fields: [categoryId], references: [id])
+  categoryId  Int
+  image       String
+  ProductItem ProductItem[] @relation("ProductProductItem")
+  Review      Review[]      @relation("ProductRe")
+  brend       Brend         @relation(fields: [brendId], references: [id])
+  brendId     Int
+  Like        Like[]        @relation("ProductLike")
 }
 
 model Cart {
@@ -120,16 +119,17 @@ model Color {
 //tepadagilar bajarilgan
 
 model ProductItem {
-  id           Int            @id @default(autoincrement())
-  name         String         @unique
-  product      Product        @relation("ProductProductItem", fields: [productId], references: [id])
-  productId    Int
-  image        String
-  quantity     Int
-  price        Float
-  CartItem     CartItem[]     @relation("CartProductItem")
-  ColorOptions ColorOptions[] @relation("ProductOption")
-  OrderItem    OrderItem[]    @relation("OrderItemProductItem")
+  id             Int              @id @default(autoincrement())
+  name           String           @unique
+  product        Product          @relation("ProductProductItem", fields: [productId], references: [id])
+  productId      Int
+  image          String
+  quantity       Int
+  price          Float
+  CartItem       CartItem[]       @relation("CartProductItem")
+  ColorOptions   ColorOptions[]   @relation("ProductOption")
+  OrderItem      OrderItem[]      @relation("OrderItemProductItem")
+  ProductOptions ProductOptions[] @relation("ProductItemPO")
 }
 
 model CartItem {
@@ -173,11 +173,11 @@ model Like {
 
 model ProductOptions {
   variantOption   VarationOption @relation("ProductItemVO", fields: [variantOptionId], references: [id])
-  product         Product        @relation("ProductPO", fields: [productId], references: [id])
-  productId       Int
+  productItem     ProductItem    @relation("ProductItemPO", fields: [productItemId], references: [id])
+  productItemId   Int
   variantOptionId Int
 
-  @@id([productId, variantOptionId])
+  @@id([productItemId, variantOptionId])
 }
 
 model ColorOptions {
