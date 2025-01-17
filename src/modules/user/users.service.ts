@@ -5,24 +5,35 @@ import { hash } from 'bcrypt';
 import { ICreateUserRequest, ICreateUserResponse, IUpdateUserRequest } from './interfaces';
 import { HASH_SALT } from '@config';
 import { readdirSync, unlinkSync } from 'fs';
+import { CreateUserDto } from './dtos';
+import { UploadService } from '../upload';
 
 @Injectable()
 export class UserService {
   constructor(
-    @Inject(PrismaService) private prismaService: PrismaService
+    @Inject(PrismaService) private prismaService: PrismaService,
+    @Inject(UploadService) private uploadService: UploadService
   ) { }
 
-  async create(payload: ICreateUserRequest): Promise<ICreateUserResponse> {
+  async create(payload: CreateUserDto): Promise<ICreateUserResponse> {
 
     const existUser = await this.findByEmail(payload.email);
 
     if (existUser)
       throw new BadRequestException('Email already in use')
 
+    
+    const userImage = await this.uploadService.uploadFile({
+      file: payload.image,
+      destination: 'users',
+    })
     payload.password = await hash(payload.password, HASH_SALT);
 
     const user = await this.prismaService.user.create({
-      data: payload
+      data: {
+        ...payload,
+        image: userImage.imageUrl,
+      }
     });
 
     return {
@@ -31,12 +42,15 @@ export class UserService {
     };
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(): Promise<ICreateUserResponse> {
 
     const users = await this.prismaService.user.findMany({
       where: { role: Roles.User }
     });
-    return users
+    return {
+      message: "All Users Retrieved",
+      users
+    }
   }
 
   async findOne(id: number): Promise<User> {
