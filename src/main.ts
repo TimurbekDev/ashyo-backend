@@ -26,7 +26,7 @@ async function startApp() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
   
-  app.useGlobalFilters(new AllExceptionFilter)
+  app.useGlobalFilters(new AllExceptionFilter);
 
   const configService = app.get(ConfigService);
 

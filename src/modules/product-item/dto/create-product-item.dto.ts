@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { ICreatePrRequest } from "../interfaces";
-import { IsNotEmpty, IsNumberString, IsString } from "class-validator";
+import { IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator";
 
 export class CreateProductItemDto implements ICreatePrRequest {
 
@@ -19,13 +19,13 @@ export class CreateProductItemDto implements ICreatePrRequest {
         default: 1
     })
     @IsNotEmpty()
-    @IsNumberString()
+    @IsNumber()
     productId: number;
 
     @ApiProperty({
         type: 'string',
         description: 'Product Item image',
-        format: 'buffer'
+        format: 'binary'
     })
     @IsNotEmpty()
     image: any;
@@ -36,7 +36,7 @@ export class CreateProductItemDto implements ICreatePrRequest {
         default: 10000
     })
     @IsNotEmpty()
-    @IsNumberString()
+    @IsNumber()
     price: number;
 
     @ApiProperty({
@@ -45,6 +45,13 @@ export class CreateProductItemDto implements ICreatePrRequest {
         default: 10
     })
     @IsNotEmpty()
-    @IsNumberString()
+    @IsNumber()
     quantity: number;
+
+    @ApiProperty({
+        description: 'Varaions id',
+        type: [Number],
+    })
+    @IsArray()
+    varations: number[]
 }
