@@ -40,6 +40,8 @@ model User {
   role      Roles     @default(User)
   Cart      Cart[]    @relation("UserCart")
   Review    Review[]  @relation("UserRe")
+  Like      Like[]    @relation("UserLike")
+  Order     Order[]   @relation("OrderUser")
 }
 
 model Category {
@@ -82,6 +84,7 @@ model Product {
   brend          Brend            @relation(fields: [brendId], references: [id])
   brendId        Int
   ProductOptions ProductOptions[] @relation("ProductPO")
+  Like           Like[]           @relation("ProductLike")
 }
 
 model Cart {
@@ -89,7 +92,6 @@ model Cart {
   user     User       @relation("UserCart", fields: [userId], references: [id])
   userId   Int
   CartItem CartItem[] @relation("CartCartItem")
-  Order    Order[]    @relation("CartOrder")
 }
 
 model Review {
@@ -99,6 +101,20 @@ model Review {
   user      User    @relation("UserRe", fields: [userId], references: [id])
   productId Int
   userId    Int
+}
+
+model Brend {
+  id      Int       @id @default(autoincrement())
+  name    String
+  image   String
+  Product Product[]
+}
+
+model Color {
+  id           Int            @id @default(autoincrement())
+  name         String
+  code         String
+  ColorOptions ColorOptions[] @relation("ColorOption")
 }
 
 //tepadagilar bajarilgan
@@ -113,6 +129,7 @@ model ProductItem {
   price        Float
   CartItem     CartItem[]     @relation("CartProductItem")
   ColorOptions ColorOptions[] @relation("ProductOption")
+  OrderItem    OrderItem[]    @relation("OrderItemProductItem")
 }
 
 model CartItem {
@@ -124,27 +141,32 @@ model CartItem {
   count         Int
 }
 
+model OrderItem {
+  id            Int         @id @default(autoincrement())
+  productItem   ProductItem @relation("OrderItemProductItem", fields: [productItemId], references: [id])
+  order         Order       @relation("OrderProduct", fields: [orderId], references: [id])
+  productItemId Int
+  orderId       Int
+  quantity      Int
+}
+
 model Order {
-  id       Int         @id @default(autoincrement())
-  cart     Cart        @relation("CartOrder", fields: [cartId], references: [id])
-  adress   Address     @relation("AdressOrder", fields: [adressId], references: [id])
-  cartId   Int
-  adressId Int
-  status   OrderStatus @default(Pending)
+  id         Int         @id @default(autoincrement())
+  adress     Address     @relation("AdressOrder", fields: [adressId], references: [id])
+  user       User        @relation("OrderUser", fields: [userId], references: [id])
+  userId     Int
+  adressId   Int
+  status     OrderStatus @default(Pending)
+  OrderItem  OrderItem[] @relation("OrderProduct")
+  totalPrice Float
 }
 
-model Color {
-  id           Int            @id @default(autoincrement())
-  name         String
-  code         String
-  ColorOptions ColorOptions[] @relation("ColorOption")
-}
-
-model Brend {
-  id      Int       @id @default(autoincrement())
-  name    String
-  image   String
-  Product Product[]
+model Like {
+  id        Int     @id @default(autoincrement())
+  product   Product @relation("ProductLike", fields: [productId], references: [id])
+  user      User    @relation("UserLike", fields: [userId], references: [id])
+  productId Int
+  userId    Int
 }
 
 //Pastdagilar bajarilishi shart emas
@@ -165,6 +187,8 @@ model ColorOptions {
   colorId       Int
   productItemId Int
 }
+
+// Enums
 
 enum OrderStatus {
   Delivered
