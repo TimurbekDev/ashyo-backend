@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { ICreateCategoryRequest } from "../interface";
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateCategoryDto implements ICreateCategoryRequest {
 
@@ -14,11 +14,29 @@ export class CreateCategoryDto implements ICreateCategoryRequest {
     name: string
 
     @ApiProperty({
+        type: Number,
         description: 'Parent category Id',
         required: false,
-        default : null
+        nullable: true,
     })
-    @IsNumber()
-    @IsOptional()
-    parentId: number;
+    parentId: number | null;
+    
+
+    @ApiProperty({
+        type: String, 
+        format: "binary",
+        description: "Category image required",
+        required: true,
+    })
+    @IsNotEmpty()
+    image: any
+
+    @ApiProperty({
+        type: String, 
+        format: "binary",
+        description: "Category icon required",
+        required: true,
+    })
+    @IsNotEmpty()
+    icon: any
 }

@@ -57,7 +57,7 @@ export class AllExceptionFilter implements ExceptionFilter {
                 url: request.url,
             });
         }
-
+console.log(exception)
         return response.status(500).json({
             statusCode: 500,
             message: exception?.message || 'Internal server error',
