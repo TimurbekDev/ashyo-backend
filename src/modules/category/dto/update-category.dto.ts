@@ -14,29 +14,31 @@ export class UpdateCategoryDto implements Omit<IUpdateCategoryRequest, 'id'> {
     name: string
 
     @ApiProperty({
+        type: String,
+        format: "binary",
         description: 'Category Icon path',
         required: false,
         default : null
     })
-    @IsString()
     @IsOptional()
-    icon: string
+    icon: any
 
     @ApiProperty({
+        type: String,
         description: 'Category Image path ',
         required: false,
-        default: null
+       format: "binary",
     })
-    @IsString()
     @IsOptional()
-    image: string
+    image: any
 
     @ApiProperty({
+        type: Number,
         description: 'Parent category Id',
         required: false,
-        default : null
+        default: null,
     })
     @IsNumber()
     @IsOptional()
-    parentId: number;
+    parentId: number | null;
 }

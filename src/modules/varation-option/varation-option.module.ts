@@ -4,9 +4,10 @@ import { VarationOptionController } from './varation-option.controller';
 import { PrismaService } from '@prisma';
 import { VarationService } from '../varation/varation.service';
 import { CategoryService } from '../category';
+import { UploadService } from '../upload';
 
 @Module({
   controllers: [VarationOptionController],
-  providers: [VarationOptionService, PrismaService, VarationService, CategoryService],
+  providers: [VarationOptionService, PrismaService, VarationService, CategoryService,UploadService],
 })
 export class VarationOptionModule { }

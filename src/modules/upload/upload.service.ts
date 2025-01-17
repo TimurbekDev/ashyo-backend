@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import {
   RemoveFileRequest,
   RemoveFileResponse,
@@ -8,12 +8,16 @@ import {
   UploadFileResponse,
 } from './interfaces';
 import { existsSync } from 'fs';
+import { isArray } from 'class-validator';
 
 @Injectable()
 export class UploadService {
   constructor() {}
 
   async uploadFile(payload: UploadFileRequest): Promise<UploadFileResponse> {
+    if(isArray(payload.file)){
+      payload.file = payload.file[0];
+    }
     const extName = path.extname(payload.file.originalname);
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const fileName = payload.file.fieldname + '-' + uniqueSuffix + extName;
@@ -49,7 +53,7 @@ export class UploadService {
   
     if (!existsSync(filePath)) {
       console.log(filePath)
-      throw new Error('File does not exist');
+      throw new NotFoundException("File Not Fount")
     }
 
     try {
@@ -64,5 +68,3 @@ export class UploadService {
     };
   }
 }
-// C:\Users\Nodirbek Savbatov\OneDrive\Рабочий стол\ashyo-backend\brands\image-1737046062146-834267334.png
-// C:\Users\Nodirbek Savbatov\OneDrive\Рабочий стол\ashyo-backend\uploads\brands\image-1737046062146-834267334.png
