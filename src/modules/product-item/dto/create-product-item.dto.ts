@@ -1,8 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { ICreateProductItem } from "../interfaces";
-import { tr } from "@faker-js/faker";
-import { IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator";
-import { CreateVarationDto } from "src/modules/varation";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
 import { CreateVariationDemoDto } from "./create-varion-option.dto";
 
 export class CreateProductItemDto implements ICreateProductItem{

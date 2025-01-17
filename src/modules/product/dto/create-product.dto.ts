@@ -32,6 +32,15 @@ export class CreateProductDto implements ICreateProductRequest {
     categoryId: number;
 
     @ApiProperty({
+        description: 'Brend Id',
+        default: 1,
+        required: true
+    })
+    @IsNotEmpty()
+    @IsNumber()
+    brendId: number;
+
+    @ApiProperty({
         type: 'string',
         required: true,
         format: 'binary',
