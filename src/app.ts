@@ -1,5 +1,5 @@
 import { appConfig, jwtConfig } from '@config';
-import { AddressModule, AuthModule, CartModule, CategoryModule, ColorModule, JwtCustomModule, RegionModule, ReviewModule, UsersModule, VarationModule, VarationOptionModule } from '@modules';
+import { AddressModule, AuthModule, CartModule, CategoryModule, ColorModule, JwtCustomModule, OrderModule, RegionModule, ReviewModule, UsersModule, VarationModule, VarationOptionModule } from '@modules';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaModule } from '@prisma';
@@ -64,7 +64,8 @@ import { BrandModule } from './modules/brand';
     AddressModule,
     RegionModule,
     CartModule,
-    ColorModule
+    ColorModule,
+    OrderModule
   ],
   providers: [
     // {
