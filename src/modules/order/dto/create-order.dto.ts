@@ -5,15 +5,6 @@ import { IsNotEmpty, IsNumber } from "class-validator";
 export class CreateOrderDto implements ICreateOrderRequest {
 
     @ApiProperty({
-        description: 'Cart ID',
-        default: 2,
-        required: true
-    })
-    @IsNotEmpty()
-    @IsNumber()
-    cartId: number;
-
-    @ApiProperty({
         description: 'Adress ID',
         default: 2,
         required: true
@@ -21,4 +12,22 @@ export class CreateOrderDto implements ICreateOrderRequest {
     @IsNotEmpty()
     @IsNumber()
     adressId: number;
+
+    @ApiProperty({
+        description: 'User ID',
+        default: 2,
+        required: true
+    })
+    @IsNotEmpty()
+    @IsNumber()
+    userId: number;
+
+    @ApiProperty({
+        description: 'Toatal price',
+        default: 2000000,
+        required: true
+    })
+    @IsNotEmpty()
+    @IsNumber()
+    totalPrice: number;
 }
