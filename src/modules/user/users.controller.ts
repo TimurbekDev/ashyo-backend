@@ -7,6 +7,7 @@ import { multerConfig } from '@config';
 import { Roles, User } from '@prisma/client';
 import { UserService } from './users.service';
 import { Protected, Role } from '@decorators';
+import { ICreateUserResponse } from './interfaces';
 
 
 @ApiTags("Users")
@@ -20,14 +21,14 @@ export class UsersController {
   @ApiOperation({ summary: "Yangi user yaratish" })
   @ApiConsumes('multipart/form-data')
   @UseInterceptors(
-    FileInterceptor("image", multerConfig)
+    FileInterceptor("image")
   )
   @Post()
   create(
     @Body() createUserDto: CreateUserDto,
     @UploadedFile() image: Express.Multer.File
   ) {
-    return this.usersService.create({ ...createUserDto, image: image ? image.filename : "" });
+    return this.usersService.create({ ...createUserDto, image: image});
   }
 
 
@@ -35,7 +36,7 @@ export class UsersController {
   @Role([Roles.UnAuth])
   @ApiOperation({ summary: "Barcha userlarni olish" })
   @Get()
-  findAll(): Promise<User[]> {
+  findAll(): Promise<ICreateUserResponse> {
     return this.usersService.findAll();
   }
 

@@ -4,6 +4,7 @@ import { PrismaModule, PrismaService } from '@prisma';
 
 import { MailerCustomService } from '../mailer/mailer.service';
 import { UserService } from './users.service';
+import { UploadService } from '../upload';
 
 
 
@@ -12,6 +13,6 @@ import { UserService } from './users.service';
 @Module({
   imports: [PrismaModule],
   controllers: [UsersController],
-  providers: [UserService,PrismaService,MailerCustomService],
+  providers: [UserService,PrismaService,MailerCustomService,UploadService],
 })
 export class UsersModule {}

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ICreateUserRequest } from '../interfaces';
-import { Type } from 'class-transformer';
+
 
 export class CreateUserDto implements ICreateUserRequest {
 

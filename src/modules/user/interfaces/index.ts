@@ -1,2 +1,2 @@
-export * from "./create-user.interfaces"
+export * from "./user-response.interfaces"
 export * from './update-user.interface'
