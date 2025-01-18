@@ -15,7 +15,8 @@ export class ProductItemService {
 
   async create(payload: ICreatePrRequest): Promise<IProductItemResponse> {
 
-    const varationOptionIds: number[] = payload.varations.split(',').map(Number);
+    let varationOptionIds: number[] = payload.varations.split(',').map(Number);
+    varationOptionIds = varationOptionIds.filter(v => v > 1)
     delete payload.varations;
 
     await this.productService.findOne(Number(payload.productId));

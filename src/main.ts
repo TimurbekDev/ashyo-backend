@@ -31,6 +31,9 @@ async function startApp() {
   const configService = app.get(ConfigService);
 
   const port = configService.get<number>("app.port");
+  console.log(configService.get<number>('redis.port'));
+  console.log(configService.get<string>('redis.host'));
+  
 
   await app.listen(port, () => {
     console.log(`server is listening on port: ${port}`)

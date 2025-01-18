@@ -16,6 +16,7 @@
       "@modules": ["./src/modules"],
       "@decorators": ["./src/decorators"],
       "@filters": ["./src/filters"],
+      "@redis": ["./src/redis"],
     },
     "incremental": true,
     "skipLibCheck": true,
