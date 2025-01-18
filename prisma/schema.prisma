@@ -141,6 +141,15 @@ model ProductItem {
   ProductOptions ProductOptions[] @relation("ProductItemPO")
 }
 
+model OrderItem {
+  id            Int         @id @default(autoincrement())
+  productItem   ProductItem @relation("OrderItemProductItem", fields: [productItemId], references: [id])
+  order         Order       @relation("OrderProduct", fields: [orderId], references: [id])
+  productItemId Int
+  orderId       Int
+  quantity      Int
+}
+
 //tepadagilar bajarilgan
 
 model CartItem {
@@ -150,15 +159,6 @@ model CartItem {
   productItem   ProductItem @relation("CartProductItem", fields: [productItemId], references: [id])
   productItemId Int
   count         Int
-}
-
-model OrderItem {
-  id            Int         @id @default(autoincrement())
-  productItem   ProductItem @relation("OrderItemProductItem", fields: [productItemId], references: [id])
-  order         Order       @relation("OrderProduct", fields: [orderId], references: [id])
-  productItemId Int
-  orderId       Int
-  quantity      Int
 }
 
 model Like {
