@@ -116,7 +116,16 @@ model Color {
   ColorOptions ColorOptions[] @relation("ColorOption")
 }
 
-//tepadagilar bajarilgan
+model Order {
+  id         Int         @id @default(autoincrement())
+  adress     Address     @relation("AdressOrder", fields: [adressId], references: [id])
+  user       User        @relation("OrderUser", fields: [userId], references: [id])
+  userId     Int
+  adressId   Int
+  status     OrderStatus @default(Pending)
+  OrderItem  OrderItem[] @relation("OrderProduct")
+  totalPrice Float
+}
 
 model ProductItem {
   id             Int              @id @default(autoincrement())
@@ -131,6 +140,8 @@ model ProductItem {
   OrderItem      OrderItem[]      @relation("OrderItemProductItem")
   ProductOptions ProductOptions[] @relation("ProductItemPO")
 }
+
+//tepadagilar bajarilgan
 
 model CartItem {
   id            Int         @id @default(autoincrement())
@@ -148,17 +159,6 @@ model OrderItem {
   productItemId Int
   orderId       Int
   quantity      Int
-}
-
-model Order {
-  id         Int         @id @default(autoincrement())
-  adress     Address     @relation("AdressOrder", fields: [adressId], references: [id])
-  user       User        @relation("OrderUser", fields: [userId], references: [id])
-  userId     Int
-  adressId   Int
-  status     OrderStatus @default(Pending)
-  OrderItem  OrderItem[] @relation("OrderProduct")
-  totalPrice Float
 }
 
 model Like {
