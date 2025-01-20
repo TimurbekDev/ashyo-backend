@@ -1,90 +1,102 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '@prisma';
 import { Roles, User } from '@prisma/client';
 import { hash } from 'bcrypt';
-import { ICreateUserRequest, ICreateUserResponse, IUpdateUserRequest } from './interfaces';
+import { IUpdateUserRequest, IUserResponse } from './interfaces';
 import { HASH_SALT } from '@config';
 import { readdirSync, unlinkSync } from 'fs';
-import { CreateUserDto } from './dtos';
+import { CreateUserDto, UpdateUserDto } from './dtos';
 import { UploadService } from '../upload';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject(PrismaService) private prismaService: PrismaService,
-    @Inject(UploadService) private uploadService: UploadService
-  ) { }
+    @Inject(UploadService) private uploadService: UploadService,
+  ) {}
 
-  async create(payload: CreateUserDto): Promise<ICreateUserResponse> {
-
+  async create(payload: CreateUserDto): Promise<IUserResponse> {
     const existUser = await this.findByEmail(payload.email);
 
-    if (existUser)
-      throw new BadRequestException('Email already in use')
+    if (existUser) throw new BadRequestException('Email already in use');
 
-    
     const userImage = await this.uploadService.uploadFile({
       file: payload.image,
       destination: 'users',
-    })
+    });
     payload.password = await hash(payload.password, HASH_SALT);
 
     const user = await this.prismaService.user.create({
       data: {
         ...payload,
         image: userImage.imageUrl,
-      }
+      },
     });
 
     return {
       message: 'User Created',
-      user
+      user,
     };
   }
 
-  async findAll(): Promise<ICreateUserResponse> {
-
+  async findAll(): Promise<IUserResponse> {
     const users = await this.prismaService.user.findMany({
-      where: { role: Roles.User }
+      where: { role: Roles.User },
     });
     return {
-      message: "All Users Retrieved",
-      users
-    }
+      message: 'All Users Retrieved',
+      users,
+    };
   }
 
-  async findOne(id: number): Promise<User> {
-
+  async findOne(id: number): Promise<IUserResponse> {
     const user = await this.prismaService.user.findFirst({
       where: { id: +id },
     });
 
-    if (!user)
-      throw new NotFoundException('User not found')
-
-    return user
-  }
-
-  async update(payload: IUpdateUserRequest): Promise<ICreateUserResponse> {
-
-    const existUser = await this.findOne(payload.id);
-    console.log(payload);
-
-
-    if (existUser.image && payload.image)
-      unlinkSync(`${process.cwd()}/uploads/${existUser.image}`);
-
-    if (!payload.email) delete payload.email
-    if (!payload.image) delete payload.image
-
-    delete payload.id
-    const user = await this.prismaService.user.update({
-      where: { id: existUser.id },
-      data: payload
-    });
+    if (!user) throw new NotFoundException('User not found');
 
     return {
-      message: 'User Updated Successfully',
+      message: 'User Found',
+      user,
+    };
+  }
+
+  async update(id: number, payload: UpdateUserDto): Promise<IUserResponse> {
+    const user = await this.prismaService.user.findUnique({ where: { id } });
+    if(!user){
+      throw new NotFoundException("User not found")
+    }
+    let userImage = user.image
+
+    if(payload.image){
+
+      await this.uploadService.deleteFile({
+        fileName: user.image
+      })
+
+      const userImageOptions = await this.uploadService.uploadFile({
+        file: payload.image,
+        destination: "user"
+      })
+      userImage = userImageOptions.imageUrl
+    }
+    await this.prismaService.user.update({
+        where:  {id},
+        data: {
+          ...payload,
+          image: userImage
+        }
+    })
+
+    return {
+      message: "Updates user",
       user
     }
   }
@@ -95,20 +107,18 @@ export class UserService {
     });
   }
 
-  async remove(id: number): Promise<ICreateUserResponse> {
+  async remove(id: number): Promise<IUserResponse> {
+    const user = await this.prismaService.user.findUnique({ where: { id } });
 
-    await this.findOne(id)
-
-    const deletedUser = await this.prismaService.user.delete({
-      where: { id: +id },
-    });
-
-    if (deletedUser.image)
-      unlinkSync(`${process.cwd()}/uploads/${deletedUser.image}`);
-
+    await this.prismaService.user.delete({
+      where: {id}
+    })
+    await this.uploadService.deleteFile({
+      fileName: user.image
+    })
     return {
-      message: 'User Deleted Successfully',
-      user: deletedUser
-    }
+      message: 'Deleted user',
+      user,
+    };
   }
 }
