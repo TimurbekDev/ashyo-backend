@@ -14,7 +14,7 @@ export class SeedsService implements OnModuleInit {
     await this.seedCity();
     await this.seedAddres();
     await this.seedBrend();
-    this.seedProduct();
+    await this.seedProduct();
   }
 
   async seedUsers(): Promise<void> {

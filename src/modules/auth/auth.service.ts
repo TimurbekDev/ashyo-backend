@@ -1,36 +1,53 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { ISignInRequest, ISignUpRequest } from './interfaces';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { IResetPasswordRequest, ISignInRequest, ISignUpRequest } from './interfaces';
 import { JwtCustomService } from '../jwt';
-import { compare } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { UserService } from '../user';
-// import { HASH_SALT } from '@constants';
-// import { RedisService } from '@redis';
-// import { MailerCustomService } from '@mailer';
-// import { DevicesService } from '../devices';
+import { RedisCacheService } from 'src/redis/redis.service';
+import { MailerCustomService } from '../mailer';
+import { PrismaService } from '@prisma';
+import { HASH_SALT } from '@config';
+
 
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject(UserService) private userService: UserService,
+    @Inject(PrismaService) private prismaService: PrismaService,
     @Inject(JwtCustomService) private jwtCustomService: JwtCustomService,
-    // @Inject(RedisService) private redisService: RedisService,
-    // @Inject(MailerCustomService) private mailerService: MailerCustomService,
+    @Inject(RedisCacheService) private redisService: RedisCacheService,
+    @Inject(MailerCustomService) private mailerService: MailerCustomService,
   ) { }
 
   async signUp(payload: ISignUpRequest) {
-    const data = await this.userService.create({
-      ...payload,
-      image : null
+
+    const existUser = await this.prismaService.user.findFirst({where: {email: payload.email}});
+
+    if (existUser) throw new BadRequestException('Email already in use');
+    payload.password = await hash(payload.password, HASH_SALT);
+    const newUser = await this.prismaService.user.create({
+      data: {
+        fullName: payload.fullName,
+        email: payload.email,
+        password: payload.password
+      }
+    })
+
+
+    await this.mailerService.CreatedUserMessage({
+      text: newUser.fullName,
+      to: newUser.email,
+      subject: `Hi ${newUser.fullName}`
     })
     const tokens = await this.jwtCustomService.generateTokens({
-      userId: data.user.id,
-      role: data.user.role,
+      userId: newUser.id,
+      role: newUser.role,
     })
 
 
     return {
-      user: data.user,
+      user: newUser,
       access_token: tokens.access,
       refresh_token: tokens.refresh
     }
@@ -58,75 +75,54 @@ export class AuthService {
     }
   }
 
-  // async googleAuth(req: any) {
-  //   let user = await this.userService.findByEmail(req.user.email)
-  //   let newUser = null
 
-  //   if (!user) {
-  //     newUser = await this.userService.create({
-  //       email: req.user.email,
-  //       password: req.user.googleId,
-  //       full_name: req.user.displayName
-  //     });
-  //     user = newUser
-  //   }
+  async forgotPassword(email: string) {
+    const user = await this.userService.findByEmail(email)
+    if (!user)
+      throw new NotFoundException('User not found')
 
-  //   const tokens = await this.jwtCustomService.generateTokens({
-  //     userId: user.id,
-  //     role: user.role,
-  //   })
+    const otp = this.#generateOtp()
 
+    await this.mailerService.sendOTP({
+      to: user.email,
+      subject: 'Your one time password',
+      text: otp
+    })
 
-  //   return {
-  //     user,
-  //     access_token: tokens.access,
-  //     refresh_token: tokens.refresh
-  //   }
-  // }
+    await this.redisService.setByText({
+      key: user.email,
+      value: +otp,
+      time: 1000*60*2
+    })
+    
 
 
-  // async forgotPassword(email: string) {
-  //   const user = await this.userService.findByEmail(email)
-  //   if (!user)
-  //     throw new NotFoundException('User not found')
+    return {
+      message: `OTP sended to this email : ${user.email}`
+    }
+  }
 
-  //   const opt = this.#generateOtp()
+  async resetPassword(payload: IResetPasswordRequest) {
+    const user = await this.prismaService.user.findFirst({where: {email: payload.email}});
 
-  //   await this.mailerService.sendMail({
-  //     to: user.email,
-  //     subject: 'OTP',
-  //     text: `Your otp : ${opt}`
-  //   })
+    if (!user)
+      throw new NotFoundException('User not found')
 
-  //   await this.redisService.setItem({
-  //     key: user.email,
-  //     value: opt,
-  //     expireTime: 60 * 5
-  //   })
+    const otp = await this.redisService.getByText(user.email)
 
-  //   return {
-  //     message: `OTP sended to this email : ${user.email}`
-  //   }
-  // }
+    if (+otp != payload.code)
+      throw new BadRequestException('OTP doesnt match')
 
-  // async resetPassword(payload: IResetPasswordRequest) {
-  //   const user = await this.userService.findByEmail(payload.email)
-  //   if (!user)
-  //     throw new NotFoundException('User not found')
-
-  //   const otp = await this.redisService.getItem(user.email)
-
-  //   if (otp != payload.code)
-  //     throw new BadRequestException('OTP doesnt match')
-
-  //   user.update({
-  //     password: await hash(payload.password, HASH_SALT)
-  //   })
-
-  //   return {
-  //     message: 'Password Successully Updated'
-  //   }
-  // }
+    await this.prismaService.user.update({
+      where: {email: user.email},
+      data: {
+        password: await hash(payload.password, HASH_SALT)
+      }
+    })
+    return {
+      message: 'Password Successully Updated'
+    }
+  }
 
   #generateOtp = (length = 6) => {
     const digits = '0123456789';

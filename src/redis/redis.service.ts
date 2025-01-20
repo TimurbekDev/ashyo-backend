@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Redis } from 'ioredis';
 
+export declare interface ISetText {
+  key: string,
+  value: number,
+  time: number
+}
+
 @Injectable()
 export class RedisCacheService {
   private client: Redis;
@@ -24,4 +30,18 @@ export class RedisCacheService {
   async deleteByUrl(url: string): Promise<void> {
     await this.client.del(url);
   }
+
+  async setByText(payload: ISetText): Promise<void> {
+    await this.client.set(payload.key, payload.value, 'EX', payload.time);
+  }
+  
+  async getByText(key: string): Promise<string | null> {
+
+    return await this.client.get(key);
+  }
+
+  async deleteByText(key: string): Promise<void> {
+    await this.client.del(key);
+  }
+  
 }
