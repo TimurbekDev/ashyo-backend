@@ -1,0 +1,5 @@
+export * from './interfaces'
+export * from './product-item.service'
+export * from './dto'
+export * from './product-item.controller'
+export * from './product-item.module'
