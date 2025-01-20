@@ -4,6 +4,7 @@ import { CreateCategoryDto, UpdateCategoryDto } from './dto';
 import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ICategoryResponse } from './interface';
+import { CacheByUrl } from '@decorators';
 
 @ApiTags('Category')
 @Controller('category')
@@ -28,6 +29,7 @@ export class CategoryController {
 
   @ApiOperation({ summary: 'Get all categories' })
   @Get()
+  @CacheByUrl(10)
   findAll():Promise<ICategoryResponse> {
     return this.categoryService.findAll();
   }

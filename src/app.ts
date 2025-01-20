@@ -1,5 +1,5 @@
-import { appConfig, jwtConfig } from '@config';
-import { AddressModule, AuthModule, CartModule, CategoryModule, ColorModule, JwtCustomModule, OrderModule, RegionModule, ReviewModule, UsersModule, VarationModule, VarationOptionModule } from '@modules';
+import { appConfig, jwtConfig, redisConfig } from '@config';
+import { AddressModule, AuthModule, CartItemModule, CartModule, CategoryModule, ColorModule, JwtCustomModule, OrderItemModule, OrderModule, ProductItemModule, RegionModule, ReviewModule, UsersModule, VarationModule, VarationOptionModule } from '@modules';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaModule } from '@prisma';
@@ -13,13 +13,14 @@ import { APP_GUARD } from '@nestjs/core';
 import { SeedsModule } from './seeds';
 import { ProductModule } from './modules/product/product.module';
 import { BrandModule } from './modules/brand';
+import { RedisModule } from '@nestjs-modules/ioredis';
 
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, mailerConfig, jwtConfig]
+      load: [appConfig, mailerConfig, jwtConfig,redisConfig]
 
     }),
 
@@ -34,6 +35,17 @@ import { BrandModule } from './modules/brand';
             user: config.get<string>('email.user'),
             pass: config.get<string>('email.pass')
           }
+        }
+      })
+    }),
+    RedisModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: 'single',
+        options: {
+          host: config.get<string>('redis.host'),
+          port: config.get<number>('redis.port')
         }
       })
     }),
@@ -65,7 +77,10 @@ import { BrandModule } from './modules/brand';
     RegionModule,
     CartModule,
     ColorModule,
-    OrderModule
+    OrderModule,
+    ProductItemModule,
+    OrderItemModule,
+    CartItemModule,
   ],
   providers: [
     // {

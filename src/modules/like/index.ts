@@ -1,0 +1,5 @@
+export * from './interfaces'
+export * from './like.service'
+export * from './dto'
+export * from './like.controller'
+export * from './like.module'

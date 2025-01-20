@@ -26,11 +26,14 @@ async function startApp() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
   
-  app.useGlobalFilters(new AllExceptionFilter)
+  app.useGlobalFilters(new AllExceptionFilter);
 
   const configService = app.get(ConfigService);
 
   const port = configService.get<number>("app.port");
+  console.log(configService.get<number>('redis.port'));
+  console.log(configService.get<string>('redis.host'));
+  
 
   await app.listen(port, () => {
     console.log(`server is listening on port: ${port}`)
