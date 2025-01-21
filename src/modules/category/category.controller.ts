@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseInterceptors, UploadedFiles, Query, ValidationPipe } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { CreateCategoryDto, UpdateCategoryDto } from './dto';
-import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CreateCategoryDto, Params, UpdateCategoryDto } from './dto';
+import { ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ICategoryResponse } from './interface';
 import { CacheByUrl } from '@decorators';
@@ -28,10 +28,26 @@ export class CategoryController {
 
 
   @ApiOperation({ summary: 'Get all categories' })
+  @ApiQuery({
+    name : 'name',
+    required : false,
+    default : 'salom'
+  })
+  @ApiQuery({
+    name : 'limit',
+    required : true,
+    default : 10
+  })
+  @ApiQuery({
+    name : 'page',
+    required : true,
+    default : 1
+  })
   @Get()
-  @CacheByUrl(10)
-  findAll():Promise<ICategoryResponse> {
-    return this.categoryService.findAll();
+  findAll(
+    @Query(new ValidationPipe({ whitelist : true })) query:Params
+  ):Promise<ICategoryResponse> {
+    return this.categoryService.findAll(query);
   }
 
   @ApiOperation({ summary: 'Get category by id' })

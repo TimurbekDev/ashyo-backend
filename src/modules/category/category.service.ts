@@ -2,8 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma';
 import {
   ICategoryResponse,
-  ICreateCategoryRequest,
-  IUpdateCategoryRequest,
+  IFilter,
 } from './interface';
 import { UploadService } from '../upload';
 import { CreateCategoryDto } from './dto';
@@ -13,7 +12,7 @@ export class CategoryService {
   constructor(
     @Inject(PrismaService) private readonly prismaService: PrismaService,
     @Inject(UploadService) private readonly uploadService: UploadService,
-  ) {}
+  ) { }
 
   async create(payload: CreateCategoryDto): Promise<ICategoryResponse> {
     const imageOtions = await this.uploadService.uploadFile({
@@ -25,8 +24,6 @@ export class CategoryService {
       destination: 'categories',
     });
 
-    console.log(payload);
-
     const newCategory = await this.prismaService.category.create({
       data: {
         ...payload,
@@ -35,17 +32,41 @@ export class CategoryService {
         icon: iconOptions.imageUrl,
       },
     });
-    console.log(newCategory);
+
     return {
       message: 'Category created',
       category: newCategory,
     };
   }
 
-  async findAll(): Promise<ICategoryResponse> {
-    const categories = await this.prismaService.category.findMany();
+  async findAll(filter: IFilter): Promise<ICategoryResponse> {
+
+
+    const categories = await this.prismaService.category.findMany({
+      where: {
+        name: filter.name ? { contains: filter.name, mode: 'insensitive' } : undefined,
+      },
+      take: filter.limit || 10,
+      skip: ((filter.page || 1) - 1) * (filter.limit || 10),
+      include: {
+        children: {
+          select: {
+            id: true,
+            name: true,
+            icon: true,
+            image: true
+          }
+        }
+      },
+    });
+
+    const totalCount = await this.prismaService.category.count({
+      where: { name: filter.name ? { contains: filter.name, mode: 'insensitive' } : undefined }
+    });
+    
     return {
       message: 'All categories retrieved',
+      totalCount: totalCount || categories.length,
       categories,
     };
   }
@@ -68,10 +89,10 @@ export class CategoryService {
       where: { id },
     });
     if (!currentCategory) throw new NotFoundException('Category not found');
-  
+
     let categoryimage = currentCategory.image;
     let categoryicon = currentCategory.icon;
-  
+
     if (payload.image) {
       await this.uploadService.deleteFile({
         fileName: currentCategory.image,
@@ -82,7 +103,7 @@ export class CategoryService {
       });
       categoryimage = imageOptions.imageUrl;
     }
-  
+
     if (payload.icon) {
       await this.uploadService.deleteFile({
         fileName: currentCategory.icon,
@@ -93,7 +114,7 @@ export class CategoryService {
       });
       categoryicon = iconOptions.imageUrl;
     }
-  
+
     const updatedCategory = await this.prismaService.category.update({
       where: { id },
       data: {
@@ -103,34 +124,34 @@ export class CategoryService {
         icon: categoryicon,
       },
     });
-  
+
     return {
       message: 'Category updated',
       category: updatedCategory,
     };
   }
-  
+
 
   async remove(id: number): Promise<ICategoryResponse> {
     try {
       const currentCategory = await this.prismaService.category.findFirst({
         where: { id },
       });
-      
+
       await this.uploadService.deleteFile({
         fileName: currentCategory.image
       })
-  
+
       await this.prismaService.category.delete({
         where: { id },
       })
-  
+
       return {
         message: 'Category deleted',
         category: currentCategory
       };
     } catch (error) {
-      if(error.response.message=="File Not Fount"){
+      if (error.response.message == "File Not Fount") {
         await this.prismaService.category.delete({
           where: { id },
         })
