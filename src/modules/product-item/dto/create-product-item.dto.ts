@@ -21,7 +21,7 @@ export class CreateProductItemDto implements ICreatePrRequest {
     })
     @IsNotEmpty()
     @IsNumber()
-    @Transform(({value})=>Math.abs(parseInt(value)))
+    @Transform(({ value }) => Math.abs(parseInt(value)))
     productId: number;
 
     @ApiProperty({
@@ -38,7 +38,7 @@ export class CreateProductItemDto implements ICreatePrRequest {
     })
     @IsNotEmpty()
     @IsNumber()
-    @Transform(({value})=>Math.abs(parseInt(value)))
+    @Transform(({ value }) => Math.abs(parseInt(value)))
     price: number;
 
     @ApiProperty({
@@ -48,7 +48,7 @@ export class CreateProductItemDto implements ICreatePrRequest {
     })
     @IsNotEmpty()
     @IsNumber()
-    @Transform(({value})=>Math.abs(parseInt(value)))
+    @Transform(({ value }) => Math.abs(parseInt(value)))
     quantity: number;
 
     @ApiProperty({
@@ -60,4 +60,11 @@ export class CreateProductItemDto implements ICreatePrRequest {
         return Array.isArray(value) ? value.map(Number) : [];
     }, { toClassOnly: true })
     varations: number[]
+
+    @ApiProperty({
+        description: 'Color Id',
+        default: 1
+    })
+    @Transform(({ value }) => Math.abs(parseInt(value)))
+    colorId: number;
 }

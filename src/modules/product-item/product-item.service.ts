@@ -3,6 +3,7 @@ import { ICreatePrRequest, IGetAllQuery, IProductItemResponse, IUpdatePrRequest 
 import { PrismaService } from '@prisma';
 import { ProductService } from '../product/product.service';
 import { UploadService } from '../upload';
+import { ColorService } from '../color';
 
 @Injectable()
 export class ProductItemService {
@@ -11,15 +12,17 @@ export class ProductItemService {
     @Inject(PrismaService) private readonly prismaService: PrismaService,
     @Inject(ProductService) private readonly productService: ProductService,
     @Inject(UploadService) private readonly uploadService: UploadService,
+    @Inject(ColorService) private readonly colorService: ColorService
   ) { }
 
   async create(payload: ICreatePrRequest): Promise<IProductItemResponse> {
 
     let varationOptionIds: number[] = payload.varations
- 
+
     delete payload.varations;
 
-    await this.productService.findOne(Number(payload.productId));
+    await this.productService.findOne(payload.productId);
+    await this.colorService.findOne(payload.colorId)
 
     const image = await this.uploadService.uploadFile({
       file: payload.image,
@@ -32,7 +35,8 @@ export class ProductItemService {
         quantity: payload.quantity,
         price: payload.price,
         name: payload.name,
-        image: image.imageUrl
+        image: image.imageUrl,
+        colorId: payload.colorId
       }
     });
 
