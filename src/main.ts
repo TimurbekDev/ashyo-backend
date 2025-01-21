@@ -14,6 +14,7 @@ async function startApp() {
   const config = new DocumentBuilder()
   .setTitle('Ashyo')
   .setVersion('1.0')
+  
   .addBearerAuth({
     type: 'http',
     scheme: 'Bearer',
@@ -22,8 +23,11 @@ async function startApp() {
     description: 'Enter JWT token',
   }, 'auth')
   .build();
+
+  
   
   const documentFactory = () => SwaggerModule.createDocument(app, config);
+
   SwaggerModule.setup('api', app, documentFactory);
   
   app.useGlobalFilters(new AllExceptionFilter);

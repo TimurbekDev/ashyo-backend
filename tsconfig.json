@@ -17,6 +17,7 @@
       "@decorators": ["./src/decorators"],
       "@filters": ["./src/filters"],
       "@redis": ["./src/redis"],
+      "@constants": ["./src/constants"],
     },
     "incremental": true,
     "skipLibCheck": true,

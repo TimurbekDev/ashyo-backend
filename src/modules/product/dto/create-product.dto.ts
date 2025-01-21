@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { ICreateProductRequest } from "../interfaces";
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { Transform } from "class-transformer";
 
 export class CreateProductDto implements ICreateProductRequest {
 
@@ -29,6 +30,7 @@ export class CreateProductDto implements ICreateProductRequest {
     })
     @IsNotEmpty()
     @IsNumber()
+    @Transform(({value})=>Math.abs(parseInt(value)))
     categoryId: number;
 
     @ApiProperty({
@@ -38,6 +40,7 @@ export class CreateProductDto implements ICreateProductRequest {
     })
     @IsNotEmpty()
     @IsNumber()
+    @Transform(({value})=>Math.abs(parseInt(value)))
     brendId: number;
 
     @ApiProperty({
@@ -46,6 +49,5 @@ export class CreateProductDto implements ICreateProductRequest {
         format: 'binary',
         description: 'Product Image',
     })
-    @IsNotEmpty()
-    image: any;
+    image: Express.Multer.File;
 }
