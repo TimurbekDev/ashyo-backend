@@ -31,18 +31,18 @@ model Address {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  fullName  String
-  image     String?
-  password  String
-  isVerified Boolean @default(false)
-  addresses Address[]
-  role      Roles     @default(User)
-  Cart      Cart[]    @relation("UserCart")
-  Review    Review[]  @relation("UserRe")
-  Like      Like[]    @relation("UserLike")
-  Order     Order[]   @relation("OrderUser")
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  fullName   String
+  image      String?
+  password   String
+  isVerified Boolean   @default(false)
+  addresses  Address[]
+  role       Roles     @default(User)
+  Cart       Cart[]    @relation("UserCart")
+  Review     Review[]  @relation("UserRe")
+  Like       Like[]    @relation("UserLike")
+  Order      Order[]   @relation("OrderUser")
 }
 
 model Category {

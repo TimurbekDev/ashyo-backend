@@ -4,6 +4,7 @@ import { PrismaService } from '@prisma';
 import { ProductService } from '../product/product.service';
 import { UploadService } from '../upload';
 import { ColorService } from '../color';
+import { ProductItem } from '@prisma/client';
 
 @Injectable()
 export class ProductItemService {
@@ -22,6 +23,8 @@ export class ProductItemService {
     delete payload.varations;
 
     await this.productService.findOne(payload.productId);
+    console.log(payload);
+    
     await this.colorService.findOne(payload.colorId)
 
     const image = await this.uploadService.uploadFile({
@@ -36,7 +39,7 @@ export class ProductItemService {
         price: payload.price,
         name: payload.name,
         image: image.imageUrl,
-        colorId: payload.colorId
+        colorId : payload.colorId
       }
     });
 
@@ -101,11 +104,27 @@ export class ProductItemService {
 
   async update(payload: IUpdatePrRequest): Promise<IProductItemResponse> {
 
+    const existProductItem = await this.findOne(payload.id);
+
+    if (payload.image) {
+
+      payload.image = (await this.uploadService.uploadFile({
+        file: payload.image as Express.Multer.File,
+        destination: 'product-item'
+      })).imageUrl as string;
+
+      if (existProductItem.productItem.image) {
+        await this.uploadService.deleteFile({
+          fileName: existProductItem.productItem.image
+        })
+      }
+    }
+
     await this.findOne(payload.id);
 
     const productItem = await this.prismaService.productItem.update({
       where: { id: payload.id },
-      data: payload
+      data: payload as ProductItem
     });
 
     return {

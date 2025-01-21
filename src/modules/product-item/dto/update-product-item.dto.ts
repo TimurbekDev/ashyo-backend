@@ -2,6 +2,7 @@ import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateProductItemDto } from './create-product-item.dto';
 import { IUpdatePrRequest } from '../interfaces';
 import { IsNumberString, IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class UpdateProductItemDto implements Omit<IUpdatePrRequest, 'id'> {
 
@@ -21,7 +22,7 @@ export class UpdateProductItemDto implements Omit<IUpdatePrRequest, 'id'> {
         format: 'buffer'
     })
     @IsOptional()
-    image: any;
+    image: Express.Multer.File;
 
     @ApiProperty({
         description: 'Price',
@@ -40,4 +41,13 @@ export class UpdateProductItemDto implements Omit<IUpdatePrRequest, 'id'> {
     @IsOptional()
     @IsNumberString()
     quantity: number;
+
+    @ApiProperty({
+        description: 'Color Id',
+        required: false,
+        default: 1
+    })
+    @IsOptional()
+    @Transform(({ value }) => parseInt(value))
+    colorId: number;
 }

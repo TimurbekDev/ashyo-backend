@@ -10,9 +10,10 @@ import { CategoryService } from '../category';
 import { AddressService } from '../address';
 import { UploadService } from '../upload';
 import { RegionService } from '../region';
+import { ColorService } from '../color';
 
 @Module({
   controllers: [OrderItemController],
-  providers: [OrderItemService,PrismaService,OrderService,UserService,ProductItemService,ProductService,CategoryService,AddressService,UploadService,RegionService],
+  providers: [OrderItemService,PrismaService,OrderService,UserService,ProductItemService,ProductService,CategoryService,AddressService,UploadService,RegionService,ColorService],
 })
 export class OrderItemModule {}

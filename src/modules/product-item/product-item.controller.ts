@@ -14,35 +14,36 @@ export class ProductItemController {
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   create(
-    @Body(new ValidationPipe({whitelist: true, transform: true, exceptionFactory: (error) =>{
-      console.log(error)
-    }})) createProductItemDto: CreateProductItemDto,
+    @Body(new ValidationPipe({
+      whitelist: true, transform: true, exceptionFactory: (error) => {
+        console.log(error)
+      }
+    })) createProductItemDto: CreateProductItemDto,
     @UploadedFile() file: Express.Multer.File
-  ) {  
+  ) {
     console.log(createProductItemDto.varations)
-    createProductItemDto.image = file    
+    createProductItemDto.image = file
     return this.productItemService.create(createProductItemDto);
   }
 
   @Get()
   @ApiQuery({
-    type : Number,
-    description : 'page',
-    name : 'page',
-    required : true
+    type: Number,
+    description: 'page',
+    name: 'page',
+    required: true
   })
   @ApiQuery({
-    type : Number,
-    description : 'limit',
-    name : 'limit',
-    required : true
+    type: Number,
+    description: 'limit',
+    name: 'limit',
+    required: true
   })
-  // @CacheByUrl(20)
   findAll(
-    @Query('page',ParseIntPipe) page:number,
-    @Query('limit',ParseIntPipe) limit:number,
-  ) {    
-    return this.productItemService.findAll({ page , limit });
+    @Query('page', ParseIntPipe) page: number,
+    @Query('limit', ParseIntPipe) limit: number,
+  ) {
+    return this.productItemService.findAll({ page, limit });
   }
 
   @Get(':id')
@@ -50,8 +51,15 @@ export class ProductItemController {
     return this.productItemService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateProductItemDto: UpdateProductItemDto) {
+  @ApiConsumes('multipart/form-data')
+  @Patch()
+  @UseInterceptors(FileInterceptor('image'))
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateProductItemDto: UpdateProductItemDto,
+    @UploadedFile() image: Express.Multer.File
+  ) {
+    updateProductItemDto.image = image;
     return this.productItemService.update({
       id,
       ...updateProductItemDto

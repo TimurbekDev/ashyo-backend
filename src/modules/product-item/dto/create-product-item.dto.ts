@@ -62,9 +62,10 @@ export class CreateProductItemDto implements ICreatePrRequest {
     varations: number[]
 
     @ApiProperty({
-        description: 'Color Id',
+        description: 'Color Id : ',
         default: 1
     })
+    @IsNotEmpty()
     @Transform(({ value }) => Math.abs(parseInt(value)))
     colorId: number;
 }
