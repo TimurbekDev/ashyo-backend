@@ -1,8 +1,12 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateCartDto, UpdateCartDto } from './dto';
 import { CartService } from './cart.service';
+import { Roles as UserRoles } from '@prisma/client';
+import { Roles } from '@decorators';
 
+@Roles(UserRoles.Admin,UserRoles.User)  
+@ApiBearerAuth('auth')
 @ApiTags('Cart')
 @Controller('cart')
 export class CartController {

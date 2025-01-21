@@ -18,6 +18,7 @@
       "@filters": ["./src/filters"],
       "@redis": ["./src/redis"],
       "@constants": ["./src/constants"],
+      "@guards": ["./src/guards"],
     },
     "incremental": true,
     "skipLibCheck": true,

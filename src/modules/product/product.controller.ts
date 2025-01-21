@@ -3,18 +3,23 @@ import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { IProductFilter } from './interfaces/product-filter.interface';
-import { ApiConsumes, ApiOperation, ApiProperty, ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiProperty, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ProductFilterDto } from './dto/filter.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Roles as UserRoles } from '@prisma/client';
+import { Public, Roles } from '@decorators';
 
+@ApiTags('Product')
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) { }
 
   @ApiOperation({summary: "Create product"})
   @ApiConsumes("multipart/form-data")
-  @Post()
   @UseInterceptors(FileInterceptor("image"))
+  @Roles(UserRoles.Admin)
+  @ApiBearerAuth('auth')
+  @Post()
   create(
     @Body(new ValidationPipe({
       whitelist: true,
@@ -73,8 +78,10 @@ export class ProductController {
     name: "minPrice",
     required: false,
   })
-
-
+  @ApiOperation({
+    summary : 'Get all products '
+  })
+  @Public()
   @Get()
   findAll(
     @Query(new ValidationPipe({whitelist: true})) params: ProductFilterDto,
@@ -83,11 +90,20 @@ export class ProductController {
     return this.productService.findAll(params);
   }
 
+  @Public()
+  @ApiOperation({
+    summary : 'Get product by id '
+  })
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.productService.findOne(+id);
   }
 
+  @Roles(UserRoles.Admin)
+  @ApiOperation({
+    summary : 'Update product by id '
+  })
+  @ApiBearerAuth('auth')
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateProductDto: UpdateProductDto) {
     return this.productService.update({
@@ -96,6 +112,11 @@ export class ProductController {
     });
   }
 
+  @Roles(UserRoles.Admin)
+  @ApiOperation({
+    summary : 'Delete product by id '
+  })
+  @ApiBearerAuth('auth')
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.productService.remove(+id);

@@ -1,16 +1,18 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseIntPipe, UseGuards, Request } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Roles } from '@prisma/client';
 import { UserService } from './users.service';
 import { IUserResponse } from './interfaces';
+import { Public, Roles } from '@decorators';
+import { Roles as UserRoles } from '@prisma/client';
 
 
 
 @ApiTags("Users")
 @ApiBearerAuth('auth')
+@Roles(UserRoles.Admin)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UserService) { }
@@ -52,7 +54,7 @@ export class UsersController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
-    @UploadedFile() image: Express.Multer.File
+    @UploadedFile() image: Express.Multer.File,
   ) {
     return this.usersService.update(id, { ...updateUserDto, image: image });
   }

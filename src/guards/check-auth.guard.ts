@@ -5,7 +5,7 @@ import { IS_PUBLIC_KEY } from "src/decorators/public.decorator";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    constructor(private jwtService: JwtCustomService, private reflector: Reflector) { }
+    constructor(private jwtCustomService: JwtCustomService, private reflector: Reflector) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -24,7 +24,9 @@ export class AuthGuard implements CanActivate {
             throw new UnauthorizedException();
         }
         try {
-            const payload = await this.jwtService.verifyToken(token, TokenType.Access);
+            const payload = await this.jwtCustomService.verifyToken(token, TokenType.Access);
+            console.log(payload);
+            
             request['user'] = payload;
         } catch {
             throw new UnauthorizedException();

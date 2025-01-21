@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaModule } from '@prisma';
 import { MailerModule } from '@nestjs-modules/mailer';
@@ -11,7 +10,8 @@ import { mailerConfig } from './config/mailer-config';
 import { SeedsModule } from './seeds';
 import { ProductModule } from './modules/product/product.module';
 import { BrandModule } from './modules/brand';
-import { AuthGuard } from './guards';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard, RolesGuard } from '@guards';
 
 
 @Module({
@@ -80,10 +80,14 @@ import { AuthGuard } from './guards';
     OrderItemModule,
     CartItemModule,
   ],
-  providers: [
+  providers : [
     {
-      useClass: AuthGuard,
-      provide: APP_GUARD
+      provide : APP_GUARD,
+      useClass : AuthGuard
+    },
+    {
+      provide : APP_GUARD,
+      useClass : RolesGuard
     }
   ]
 })
