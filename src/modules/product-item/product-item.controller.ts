@@ -4,7 +4,6 @@ import { CreateProductItemDto } from './dto/create-product-item.dto';
 import { UpdateProductItemDto } from './dto/update-product-item.dto';
 import { ApiConsumes, ApiQuery } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CacheByUrl } from '@decorators';
 
 @Controller('product-item')
 export class ProductItemController {

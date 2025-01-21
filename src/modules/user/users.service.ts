@@ -2,15 +2,13 @@ import {
   BadRequestException,
   Inject,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '@prisma';
 import { Roles, User } from '@prisma/client';
 import { hash } from 'bcrypt';
-import { IUpdateUserRequest, IUserResponse } from './interfaces';
+import { IUserResponse } from './interfaces';
 import { HASH_SALT } from '@config';
-import { readdirSync, unlinkSync } from 'fs';
 import { CreateUserDto, UpdateUserDto } from './dtos';
 import { UploadService } from '../upload';
 
