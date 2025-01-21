@@ -6,9 +6,3 @@ export declare interface IProductFilter {
     minPrice?: number;
     maxPrice?: number;
 }
-// 
-// price: number;
-// priceFrom: number;
-// priceTo: number;
-// sort: string;
-// order: string;

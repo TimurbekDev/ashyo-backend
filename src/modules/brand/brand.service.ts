@@ -67,7 +67,6 @@ export class BrandService {
     }
 
     let updatedImage = findBrand.image;
-    console.log(updateBrandDto.image);
     if (updateBrandDto.image) {
       await this.uploadService.deleteFile({ fileName: findBrand.image });
       const newImageOptions = await this.uploadService.uploadFile({
