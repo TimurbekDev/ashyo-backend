@@ -1,19 +1,17 @@
-import { appConfig, jwtConfig, redisConfig } from '@config';
-import { AddressModule, AuthModule, CartItemModule, CartModule, CategoryModule, ColorModule, JwtCustomModule, OrderItemModule, OrderModule, ProductItemModule, RegionModule, ReviewModule, UsersModule, VarationModule, VarationOptionModule } from '@modules';
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaModule } from '@prisma';
-
-import { mailerConfig } from './config/mailer-config';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { RedisModule } from '@nestjs-modules/ioredis';
+import { appConfig, jwtConfig, redisConfig } from '@config';
+import { AddressModule, AuthModule, CartItemModule, CartModule, CategoryModule, ColorModule, JwtCustomModule, OrderItemModule, OrderModule, ProductItemModule, RegionModule, ReviewModule, UsersModule, VarationModule, VarationOptionModule } from '@modules';
 import { ServeStaticModule } from '@nestjs/serve-static';
-
-import { CheckAuthGuard } from './modules/guards/check-auth.guard';
-import { APP_GUARD } from '@nestjs/core';
+import { mailerConfig } from './config/mailer-config';
 import { SeedsModule } from './seeds';
 import { ProductModule } from './modules/product/product.module';
 import { BrandModule } from './modules/brand';
-import { RedisModule } from '@nestjs-modules/ioredis';
+import { AuthGuard } from './guards';
 
 
 @Module({
@@ -83,10 +81,10 @@ import { RedisModule } from '@nestjs-modules/ioredis';
     CartItemModule,
   ],
   providers: [
-    // {
-    //   useClass: CheckAuthGuard,
-    //   provide: APP_GUARD
-    // }
+    {
+      useClass: AuthGuard,
+      provide: APP_GUARD
+    }
   ]
 })
 export class AppModule { }

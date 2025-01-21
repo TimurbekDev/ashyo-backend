@@ -4,7 +4,6 @@ import { CreateCategoryDto, Params, UpdateCategoryDto } from './dto';
 import { ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ICategoryResponse } from './interface';
-import { CacheByUrl } from '@decorators';
 
 @ApiTags('Category')
 @Controller('category')
@@ -20,12 +19,12 @@ export class CategoryController {
     { name: 'icon', maxCount: 1 },
   ]))
   create(
-    @Body(new ValidationPipe({ whitelist : true})) createCategoryDto: CreateCategoryDto,
+    @Body(new ValidationPipe({ whitelist: true })) createCategoryDto: CreateCategoryDto,
     @UploadedFiles() files: { image: Express.Multer.File, icon: Express.Multer.File }
   ): Promise<ICategoryResponse> {
     createCategoryDto.icon = files.icon;
     createCategoryDto.image = files.image;
-    
+
     return this.categoryService.create(createCategoryDto);
   }
 
@@ -68,7 +67,7 @@ export class CategoryController {
   ]))
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body(new ValidationPipe({ whitelist : true })) updateCategoryDto: UpdateCategoryDto,
+    @Body(new ValidationPipe({ whitelist: true })) updateCategoryDto: UpdateCategoryDto,
     @UploadedFiles() files: {
       image: Express.Multer.File, icon: Express.Multer.File,
     }
@@ -76,7 +75,7 @@ export class CategoryController {
     updateCategoryDto.icon = files.icon;
     updateCategoryDto.image = files.image;
     console.log(updateCategoryDto);
-    
+
 
     return this.categoryService.update({
       id,
