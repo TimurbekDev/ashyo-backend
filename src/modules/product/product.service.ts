@@ -1,11 +1,11 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma';
 import { CategoryService } from '../category';
-import { ICreateProductRequest, IProductResponse, IUpdateProductRequest } from './interfaces';
+import { IProductResponse, IUpdateProductRequest } from './interfaces';
 import { IProductFilter } from './interfaces/product-filter.interface';
-import { LIMIT, PAGE } from '@constants';
 import { CreateProductDto } from './dto';
 import { UploadService } from '../upload';
+import { LIMIT, PAGE } from '@constants';
 
 
 

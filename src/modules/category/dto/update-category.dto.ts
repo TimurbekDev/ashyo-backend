@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IUpdateCategoryRequest } from '../interface';
 import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class UpdateCategoryDto implements Omit<IUpdateCategoryRequest, 'id'> {
 
@@ -18,27 +19,23 @@ export class UpdateCategoryDto implements Omit<IUpdateCategoryRequest, 'id'> {
         format: "binary",
         description: 'Category Icon path',
         required: false,
-        default : null
     })
-    @IsOptional()
-    icon: any
+    icon: Express.Multer.File
 
     @ApiProperty({
         type: String,
         description: 'Category Image path ',
         required: false,
-       format: "binary",
+        format: "binary",
     })
-    @IsOptional()
-    image: any
+    image: Express.Multer.File
 
     @ApiProperty({
         type: Number,
         description: 'Parent category Id',
         required: false,
-        default: null,
     })
-    @IsNumber()
     @IsOptional()
-    parentId: number | null;
-}
+    @Transform(({ value }) => parseInt(value))
+    parentId: number;
+}   

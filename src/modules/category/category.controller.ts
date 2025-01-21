@@ -20,39 +20,42 @@ export class CategoryController {
     { name: 'icon', maxCount: 1 },
   ]))
   create(
-    @Body() createCategoryDto: CreateCategoryDto,
-    @UploadedFiles() files: {image: Express.Multer.File, icon: Express.Multer.File}
-  ):Promise<ICategoryResponse> {
-    return this.categoryService.create({...createCategoryDto,image: files.image, icon: files.icon});
+    @Body(new ValidationPipe({ whitelist : true})) createCategoryDto: CreateCategoryDto,
+    @UploadedFiles() files: { image: Express.Multer.File, icon: Express.Multer.File }
+  ): Promise<ICategoryResponse> {
+    createCategoryDto.icon = files.icon;
+    createCategoryDto.image = files.image;
+    
+    return this.categoryService.create(createCategoryDto);
   }
 
 
   @ApiOperation({ summary: 'Get all categories' })
   @ApiQuery({
-    name : 'name',
-    required : false,
-    default : 'salom'
+    name: 'name',
+    required: false,
+    default: 'salom'
   })
   @ApiQuery({
-    name : 'limit',
-    required : true,
-    default : 10
+    name: 'limit',
+    required: true,
+    default: 10
   })
   @ApiQuery({
-    name : 'page',
-    required : true,
-    default : 1
+    name: 'page',
+    required: true,
+    default: 1
   })
   @Get()
   findAll(
-    @Query(new ValidationPipe({ whitelist : true })) query:Params
-  ):Promise<ICategoryResponse> {
+    @Query(new ValidationPipe({ whitelist: true })) query: Params
+  ): Promise<ICategoryResponse> {
     return this.categoryService.findAll(query);
   }
 
   @ApiOperation({ summary: 'Get category by id' })
   @Get(':id')
-  findOne(@Param('id',ParseIntPipe) id: number):Promise<ICategoryResponse> {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<ICategoryResponse> {
     return this.categoryService.findOne(+id);
   }
 
@@ -64,23 +67,26 @@ export class CategoryController {
     { name: 'icon', maxCount: 1 },
   ]))
   update(
-    @Param('id',ParseIntPipe) id: number, 
-    @Body() updateCategoryDto: UpdateCategoryDto,
-    @UploadedFiles() files: {image: Express.Multer.File, icon: Express.Multer.File,
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new ValidationPipe({ whitelist : true })) updateCategoryDto: UpdateCategoryDto,
+    @UploadedFiles() files: {
+      image: Express.Multer.File, icon: Express.Multer.File,
     }
-  ):Promise<ICategoryResponse> {
-    return this.categoryService.update(
+  ): Promise<ICategoryResponse> {
+    updateCategoryDto.icon = files.icon;
+    updateCategoryDto.image = files.image;
+    console.log(updateCategoryDto);
+    
+
+    return this.categoryService.update({
       id,
-    {...updateCategoryDto,
-      image: files.image,
-      icon: files.icon
-    },
-    );
+      ...updateCategoryDto
+    });
   }
 
   @ApiOperation({ summary: 'Delete category by id' })
   @Delete(':id')
-  remove(@Param('id',ParseIntPipe) id: number):Promise<ICategoryResponse> {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<ICategoryResponse> {
     return this.categoryService.remove(id);
   }
 }

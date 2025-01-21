@@ -3,9 +3,11 @@ import { PrismaService } from '@prisma';
 import {
   ICategoryResponse,
   IFilter,
+  IUpdateCategoryRequest,
 } from './interface';
 import { UploadService } from '../upload';
 import { CreateCategoryDto } from './dto';
+import { Category } from '@prisma/client';
 
 @Injectable()
 export class CategoryService {
@@ -15,6 +17,7 @@ export class CategoryService {
   ) { }
 
   async create(payload: CreateCategoryDto): Promise<ICategoryResponse> {
+
     const imageOtions = await this.uploadService.uploadFile({
       file: payload.image,
       destination: 'categories',
@@ -27,7 +30,6 @@ export class CategoryService {
     const newCategory = await this.prismaService.category.create({
       data: {
         ...payload,
-        parentId: Number.isNaN(+payload.parentId) ? null : +payload.parentId,
         image: imageOtions.imageUrl,
         icon: iconOptions.imageUrl,
       },
@@ -63,7 +65,7 @@ export class CategoryService {
     const totalCount = await this.prismaService.category.count({
       where: { name: filter.name ? { contains: filter.name, mode: 'insensitive' } : undefined }
     });
-    
+
     return {
       message: 'All categories retrieved',
       totalCount: totalCount || categories.length,
@@ -84,78 +86,54 @@ export class CategoryService {
     };
   }
 
-  async update(id: number, payload: CreateCategoryDto): Promise<ICategoryResponse> {
-    const currentCategory = await this.prismaService.category.findFirst({
-      where: { id },
-    });
-    if (!currentCategory) throw new NotFoundException('Category not found');
+  async update(payload: IUpdateCategoryRequest): Promise<ICategoryResponse> {
 
-    let categoryimage = currentCategory.image;
-    let categoryicon = currentCategory.icon;
+    console.log(payload);
+
+
+    const existcategory = await this.findOne(payload.id);
 
     if (payload.image) {
+      payload.image = (await this.uploadService.uploadFile({
+        file: payload.image as Express.Multer.File,
+        destination: 'categories'
+      })).imageUrl;
+
       await this.uploadService.deleteFile({
-        fileName: currentCategory.image,
+        fileName: existcategory.category.image
       });
-      const imageOptions = await this.uploadService.uploadFile({
-        file: payload.image,
-        destination: 'categories',
-      });
-      categoryimage = imageOptions.imageUrl;
     }
 
     if (payload.icon) {
+      payload.icon = (await this.uploadService.uploadFile({
+        file: payload.icon as Express.Multer.File,
+        destination: 'categories'
+      })).imageUrl;
+
       await this.uploadService.deleteFile({
-        fileName: currentCategory.icon,
+        fileName: existcategory.category.icon
       });
-      const iconOptions = await this.uploadService.uploadFile({
-        file: payload.icon,
-        destination: 'categories',
-      });
-      categoryicon = iconOptions.imageUrl;
     }
 
-    const updatedCategory = await this.prismaService.category.update({
-      where: { id },
-      data: {
-        ...payload,
-        parentId: Number.isNaN(+payload.parentId) ? null : +payload.parentId,
-        image: categoryimage,
-        icon: categoryicon,
-      },
-    });
+
+    const category = await this.prismaService.category.update({ where: { id: payload.id }, data: payload as Category });
+
 
     return {
       message: 'Category updated',
-      category: updatedCategory,
-    };
+      category
+    }
   }
 
 
   async remove(id: number): Promise<ICategoryResponse> {
-    try {
-      const currentCategory = await this.prismaService.category.findFirst({
-        where: { id },
-      });
+    await this.findOne(id);
 
-      await this.uploadService.deleteFile({
-        fileName: currentCategory.image
-      })
+    const category = await this.prismaService.category.delete({ where: { id } });
 
-      await this.prismaService.category.delete({
-        where: { id },
-      })
-
-      return {
-        message: 'Category deleted',
-        category: currentCategory
-      };
-    } catch (error) {
-      if (error.response.message == "File Not Fount") {
-        await this.prismaService.category.delete({
-          where: { id },
-        })
-      }
+    return {
+      message: 'Category deleted',
+      category
     }
   }
 }

@@ -110,10 +110,10 @@ model Brend {
 }
 
 model Color {
-  id           Int            @id @default(autoincrement())
-  name         String
-  code         String
-  ColorOptions ColorOptions[] @relation("ColorOption")
+  id          Int           @id @default(autoincrement())
+  name        String
+  code        String
+  ProductItem ProductItem[] @relation("ColorItem")
 }
 
 model Order {
@@ -131,12 +131,13 @@ model ProductItem {
   id             Int              @id @default(autoincrement())
   name           String           @unique
   product        Product          @relation("ProductProductItem", fields: [productId], references: [id])
+  color          Color            @relation("ColorItem", fields: [colorId], references: [id])
+  colorId        Int
   productId      Int
   image          String
   quantity       Int
   price          Float
   CartItem       CartItem[]       @relation("CartProductItem")
-  ColorOptions   ColorOptions[]   @relation("ProductOption")
   OrderItem      OrderItem[]      @relation("OrderItemProductItem")
   ProductOptions ProductOptions[] @relation("ProductItemPO")
 }
@@ -178,14 +179,6 @@ model ProductOptions {
   variantOptionId Int
 
   @@id([productItemId, variantOptionId])
-}
-
-model ColorOptions {
-  id            Int         @id @default(autoincrement())
-  color         Color       @relation("ColorOption", fields: [colorId], references: [id])
-  productItem   ProductItem @relation("ProductOption", fields: [productItemId], references: [id])
-  colorId       Int
-  productItemId Int
 }
 
 // Enums
