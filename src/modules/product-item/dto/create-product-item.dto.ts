@@ -1,6 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { ICreatePrRequest } from "../interfaces";
 import { IsArray, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { Transform } from "class-transformer";
 
 export class CreateProductItemDto implements ICreatePrRequest {
 
@@ -20,6 +21,7 @@ export class CreateProductItemDto implements ICreatePrRequest {
     })
     @IsNotEmpty()
     @IsNumber()
+    @Transform(({value})=>Math.abs(parseInt(value)))
     productId: number;
 
     @ApiProperty({
@@ -27,8 +29,7 @@ export class CreateProductItemDto implements ICreatePrRequest {
         description: 'Product Item image',
         format: 'binary'
     })
-    @IsNotEmpty()
-    image: any;
+    image: Express.Multer.File;
 
     @ApiProperty({
         description: 'Price',
@@ -37,6 +38,7 @@ export class CreateProductItemDto implements ICreatePrRequest {
     })
     @IsNotEmpty()
     @IsNumber()
+    @Transform(({value})=>Math.abs(parseInt(value)))
     price: number;
 
     @ApiProperty({
@@ -46,6 +48,7 @@ export class CreateProductItemDto implements ICreatePrRequest {
     })
     @IsNotEmpty()
     @IsNumber()
+    @Transform(({value})=>Math.abs(parseInt(value)))
     quantity: number;
 
     @ApiProperty({
@@ -53,5 +56,8 @@ export class CreateProductItemDto implements ICreatePrRequest {
         type: [Number],
     })
     @IsArray()
+    @Transform(({ value }) => {
+        return Array.isArray(value) ? value.map(Number) : [];
+    }, { toClassOnly: true })
     varations: number[]
 }

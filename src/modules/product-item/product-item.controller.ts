@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseInterceptors, UploadedFile, Query, ValidationPipe } from '@nestjs/common';
 import { ProductItemService } from './product-item.service';
 import { CreateProductItemDto } from './dto/create-product-item.dto';
 import { UpdateProductItemDto } from './dto/update-product-item.dto';
@@ -14,9 +14,12 @@ export class ProductItemController {
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   create(
-    @Body() createProductItemDto: CreateProductItemDto,
+    @Body(new ValidationPipe({whitelist: true, transform: true, exceptionFactory: (error) =>{
+      console.log(error)
+    }})) createProductItemDto: CreateProductItemDto,
     @UploadedFile() file: Express.Multer.File
-  ) {        
+  ) {  
+    console.log(createProductItemDto.varations)
     createProductItemDto.image = file    
     return this.productItemService.create(createProductItemDto);
   }

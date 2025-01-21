@@ -15,8 +15,8 @@ export class ProductItemService {
 
   async create(payload: ICreatePrRequest): Promise<IProductItemResponse> {
 
-    let varationOptionIds: number[] = payload.varations.split(',').map(Number);
-    varationOptionIds = varationOptionIds.filter(v => v > 1)
+    let varationOptionIds: number[] = payload.varations
+ 
     delete payload.varations;
 
     await this.productService.findOne(Number(payload.productId));
@@ -28,9 +28,9 @@ export class ProductItemService {
 
     const productItem = await this.prismaService.productItem.create({
       data: {
-        productId: Number(payload.productId),
-        quantity: Number(payload.quantity),
-        price: Number(payload.price),
+        productId: payload.productId,
+        quantity: payload.quantity,
+        price: payload.price,
         name: payload.name,
         image: image.imageUrl
       }
