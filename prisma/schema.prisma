@@ -36,6 +36,7 @@ model User {
   fullName  String
   image     String?
   password  String
+  isVerified Boolean @default(false)
   addresses Address[]
   role      Roles     @default(User)
   Cart      Cart[]    @relation("UserCart")
