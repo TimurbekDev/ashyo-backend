@@ -8,7 +8,7 @@ import { mailerConfig } from './config/mailer-config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
-import { CheckAuthGuard } from './guards/check-auth.guard';
+import { CheckAuthGuard } from './modules/guards/check-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { SeedsModule } from './seeds';
 import { ProductModule } from './modules/product/product.module';
