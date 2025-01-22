@@ -1,3 +1,4 @@
+import { InjectRedis } from '@nestjs-modules/ioredis';
 import { Injectable } from '@nestjs/common';
 import { Redis } from 'ioredis';
 
@@ -9,7 +10,10 @@ export declare interface ISetText {
 
 @Injectable()
 export class RedisCacheService {
-  private client: Redis;
+
+  constructor(
+    @InjectRedis() private client : Redis
+  ){}
 
   async get(key: string): Promise<string | null> {
     return await this.client.get(key);
@@ -32,7 +36,6 @@ export class RedisCacheService {
   }
 
   async getByText(key: string): Promise<string | null> {
-
     return await this.client.get(key);
   }
 

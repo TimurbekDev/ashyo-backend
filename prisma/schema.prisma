@@ -37,6 +37,7 @@ model User {
   Review     Review[]  @relation("UserRe")
   Like       Like[]    @relation("UserLike")
   Order      Order[]   @relation("OrderUser")
+  Rate       Rate[]    @relation("UserRate")
 }
 
 model Category {
@@ -79,6 +80,7 @@ model Product {
   brend       Brend         @relation("BrendProduct", fields: [brendId], references: [id], onDelete: Cascade)
   brendId     Int
   Like        Like[]        @relation("ProductLike")
+  Rate        Rate[]        @relation("ProductRate")
 }
 
 model Cart {
@@ -170,6 +172,15 @@ model ProductOptions {
   variantOptionId Int
 
   @@id([productItemId, variantOptionId])
+}
+
+model Rate {
+  id        Int     @id @default(autoincrement())
+  product   Product @relation("ProductRate", fields: [productId], references: [id], onDelete: Cascade)
+  user      User    @relation("UserRate", fields: [userId], references: [id], onDelete: Cascade)
+  productId Int
+  userId    Int
+  value     Int
 }
 
 enum OrderStatus {
