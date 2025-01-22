@@ -158,7 +158,7 @@ export class AuthService {
       await this.redisService.setByText({
         key: user.email,
         value: 1245,
-        time: 30*60*1000,
+        time: 60*30,
       })
       
       return {
