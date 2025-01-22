@@ -9,7 +9,6 @@ import { UpdateBrandDto } from './dto/update-brand.dto';
 import { PrismaService } from '@prisma';
 import { UploadService } from '../upload';
 import { IBrandResponse } from './interfaces';
-import { strict } from 'assert';
 
 @Injectable()
 export class BrandService {
@@ -37,13 +36,14 @@ export class BrandService {
   async findAll(): Promise<IBrandResponse> {
     return {
       message: 'All brands retrieved',
-      brands: await this.prismaService.brend.findMany(),
+      brands: await this.prismaService.brend.findMany({ include : { Product : true }}),
     };
   }
 
   async findOne(id: number): Promise<IBrandResponse> {
     const findBrand = await this.prismaService.brend.findUnique({
       where: { id },
+      include : { Product : true }
     });
     if (!findBrand) {
       throw new NotFoundException('Brand not found');

@@ -26,7 +26,6 @@ async function startApp() {
     'auth',
   )
   .build();
-
   
   const documentFactory = () => SwaggerModule.createDocument(app, config);
 
@@ -38,8 +37,9 @@ async function startApp() {
   const configService = app.get(ConfigService);
 
   const port = configService.get<number>("app.port");
+  const host = configService.get<string>("app.host");
   
-  await app.listen(port, () => {
+  await app.listen(port, host,() => {
     console.log(`server is listening on port: ${port}`)
   });
 }

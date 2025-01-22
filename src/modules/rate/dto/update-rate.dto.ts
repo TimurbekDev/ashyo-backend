@@ -1,10 +1,9 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateLikeDto } from './create-like.dto';
-import { IUpdateLikeRequest } from '../interfaces';
 import { IsNumber, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IUpdateRateRequest } from '../interfaces';
+import { Transform } from 'class-transformer';
 
-export class UpdateLikeDto implements Omit<IUpdateLikeRequest, 'id'> {
+export class UpdateRateDto implements Omit<IUpdateRateRequest, 'id'> {
 
     @ApiProperty({
         description: 'Product Id',
@@ -21,4 +20,13 @@ export class UpdateLikeDto implements Omit<IUpdateLikeRequest, 'id'> {
     @IsOptional()
     @IsNumber()
     userId: number;
+
+    @ApiProperty({
+        description: 'Value',
+        type: Number,
+        default: 5
+    })
+    @IsOptional()
+    @Transform(({ value }) => parseInt(value))
+    value: number
 }

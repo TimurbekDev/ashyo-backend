@@ -1,5 +1,5 @@
 export * from './interfaces'
-export * from './like.service'
+export * from './rate.service'
 export * from './dto'
-export * from './like.controller'
+export * from './rate.controller'
 export * from './like.module'

@@ -5,6 +5,16 @@ CREATE TYPE "OrderStatus" AS ENUM ('Pending', 'Delivered', 'Cancelled');
 CREATE TYPE "Roles" AS ENUM ('User', 'Admin');
 
 -- CreateTable
+CREATE TABLE "Rate" (
+    "id" SERIAL NOT NULL,
+    "productId" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "value" INTEGER NOT NULL,
+
+    CONSTRAINT "Rate_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Region" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
@@ -188,6 +198,12 @@ CREATE UNIQUE INDEX "Product_name_key" ON "Product"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ProductItem_name_key" ON "ProductItem"("name");
+
+-- AddForeignKey
+ALTER TABLE "Rate" ADD CONSTRAINT "Rate_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Rate" ADD CONSTRAINT "Rate_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Region" ADD CONSTRAINT "Region_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Region"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -1,7 +1,27 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+
+model Rate {
+  id        Int     @id @default(autoincrement())
+  product   Product @relation("ProductRate", fields: [productId], references: [id], onDelete: Cascade)
+  user      User    @relation("UserRate", fields: [userId], references: [id], onDelete: Cascade)
+  productId Int
+  userId    Int
+  value     Int
+} 
 
 model Region {
   id         Int       @id @default(autoincrement())
@@ -174,15 +194,6 @@ model ProductOptions {
   @@id([productItemId, variantOptionId])
 }
 
-model Rate {
-  id        Int     @id @default(autoincrement())
-  product   Product @relation("ProductRate", fields: [productId], references: [id], onDelete: Cascade)
-  user      User    @relation("UserRate", fields: [userId], references: [id], onDelete: Cascade)
-  productId Int
-  userId    Int
-  value     Int
-}
-
 enum OrderStatus {
   Pending
   Delivered
@@ -193,3 +204,4 @@ enum Roles {
   User
   Admin
 }
+

@@ -86,6 +86,9 @@ export class ProductService {
       where: whereCondition,
       skip: (page - 1) * limit,
       take: limit,
+      include:{
+        ProductItem : true
+      }
     });
 
     const totalCountPromise = this.prismaService.product.count({

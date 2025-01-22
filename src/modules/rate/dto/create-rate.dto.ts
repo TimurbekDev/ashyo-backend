@@ -1,8 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { ICreateLikeRequest } from "../interfaces";
 import { IsNotEmpty, IsNumber } from "class-validator";
+import { ICreateRateRequest } from "../interfaces";
+import { Transform } from "class-transformer";
 
-export class CreateLikeDto implements ICreateLikeRequest {
+export class CreateRateDto implements ICreateRateRequest {
 
     @ApiProperty({
         description: 'Product Id',
@@ -23,8 +24,11 @@ export class CreateLikeDto implements ICreateLikeRequest {
     userId: number;
 
     @ApiProperty({
-        description : 'Value',
-        default : 5
+        description: 'Value',
+        type : Number,
+        default: 5
     })
-    value:number
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value))
+    value: number
 }

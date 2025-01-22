@@ -1,3 +1,3 @@
-export * from './create-like.interface'
-export * from './update-like.interface'
-export * from './repose-like.interface'
+export * from './create-rate.interface'
+export * from './update-rate.interface'
+export * from './repose-rate.interface'

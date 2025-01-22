@@ -2,10 +2,10 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma';
 import { ProductService } from '../product/product.service';
 import { UserService } from '../user';
-import { ICreateLikeRequest, ILikeResponse, IUpdateLikeRequest } from './interfaces';
+import { ICreateRateRequest, IRateResponse, IUpdateRateRequest } from './interfaces';
 
 @Injectable()
-export class LikeService {
+export class RateService {
 
   constructor(
     @Inject(PrismaService) private readonly prismaService: PrismaService,
@@ -13,65 +13,65 @@ export class LikeService {
     @Inject(UserService) private readonly userService: UserService
   ) { }
 
-  async create(payload: ICreateLikeRequest): Promise<ILikeResponse> {
+  async create(payload: ICreateRateRequest): Promise<IRateResponse> {
 
     await this.productService.findOne(payload.productId);
     await this.userService.findOne(payload.userId);
 
-    const like = await this.prismaService.like.create({ data: payload });
+    const rate = await this.prismaService.rate.create({ data: payload });
 
     return {
       message: 'Like created',
-      like
+      rate
     };
   }
 
-  async findAll(): Promise<ILikeResponse> {
+  async findAll(): Promise<IRateResponse> {
 
-    const likes = await this.prismaService.like.findMany();
+    const rates = await this.prismaService.rate.findMany();
 
     return {
       message: 'All Likes',
-      likes
+      rates
     };
   }
 
-  async findOne(id: number): Promise<ILikeResponse> {
+  async findOne(id: number): Promise<IRateResponse> {
 
-    const like = await this.prismaService.like.findFirst({ where: { id } });
+    const rate = await this.prismaService.rate.findFirst({ where: { id } });
 
-    if (!like)
+    if (!rate)
       throw new NotFoundException('Like not found');
 
     return {
       message: 'Like found',
-      like
+      rate
     };
   }
 
-  async update(payload: IUpdateLikeRequest): Promise<ILikeResponse> {
+  async update(payload: IUpdateRateRequest): Promise<IRateResponse> {
 
     await this.findOne(payload.id);
 
-    const like = await this.prismaService.like.update({
+    const rate = await this.prismaService.rate.update({
       where: { id: payload.id },
       data: payload
     })
     return {
       message: 'Like updated',
-      like
+      rate
     };
   }
 
-  async remove(id: number): Promise<ILikeResponse> {
+  async remove(id: number): Promise<IRateResponse> {
 
     await this.findOne(id);
 
-    const like = await this.prismaService.like.delete({ where: { id } });
+    const rate = await this.prismaService.rate.delete({ where: { id } });
 
     return {
       message: 'Like Deleted',
-      like
+      rate
     };
   }
 }

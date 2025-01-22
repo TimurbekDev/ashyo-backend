@@ -7,7 +7,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { appConfig, baseUrlConfig, jwtConfig, mailerConfig, redisConfig, throttleConfig } from '@config';
-import { AddressModule, AuthModule, BrandModule, CartItemModule, CartModule, CategoryModule, ColorModule, JwtCustomModule, LikeModule, OrderItemModule, OrderModule, ProductItemModule, ProductModule, RegionModule, ReviewModule, UsersModule, VarationModule, VarationOptionModule } from '@modules';
+import { AddressModule, AuthModule, BrandModule, CartItemModule, CartModule, CategoryModule, ColorModule, JwtCustomModule, LikeModule, OrderItemModule, OrderModule, ProductItemModule, ProductModule, RateModule, RegionModule, ReviewModule, UsersModule, VarationModule, VarationOptionModule } from '@modules';
 import { SeedsModule } from './seeds';
 import { AuthGuard, RolesGuard } from '@guards';
 
@@ -85,7 +85,8 @@ import { AuthGuard, RolesGuard } from '@guards';
     ProductItemModule,
     OrderItemModule,
     CartItemModule,
-    LikeModule
+    LikeModule,
+    RateModule
   ],
   providers : [
     {

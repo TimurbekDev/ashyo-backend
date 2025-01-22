@@ -1,2 +1,2 @@
-export * from './create-like.dto'
-export * from './update-like.dto'
+export * from './update-rate.dto'
+export * from './create-rate.dto'
