@@ -6,7 +6,7 @@ export class SignInDto implements ISignInRequest {
     
     @ApiProperty({
         description: 'User Email',
-        example: 'timurbek@gmail.com',
+        example: 'admin@gmail.com',
     })
     @IsNotEmpty()
     @IsEmail()
@@ -14,7 +14,7 @@ export class SignInDto implements ISignInRequest {
 
     @ApiProperty({
         description: 'User Password',
-        example: 'Timurbek123@',
+        example: 'admin123',
     })
     @IsNotEmpty()
     @IsString()

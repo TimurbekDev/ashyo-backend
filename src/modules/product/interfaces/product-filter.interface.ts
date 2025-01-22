@@ -5,4 +5,5 @@ export declare interface IProductFilter {
     categoryId?: number;
     minPrice?: number;
     maxPrice?: number;
+    varationOptionIds?:number[];
 }

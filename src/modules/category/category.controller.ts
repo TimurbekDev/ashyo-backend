@@ -1,10 +1,11 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, UseInterceptors, UploadedFiles, Query, ValidationPipe } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto, Params, UpdateCategoryDto } from './dto';
-import { ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ICategoryResponse } from './interface';
-import { CacheByUrl } from '@decorators';
+import { Public, Roles } from '@decorators';
+import { Roles as UserRoles } from '@prisma/client';
 
 @ApiTags('Category')
 @Controller('category')
@@ -14,18 +15,20 @@ export class CategoryController {
 
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Create a new category' })
+  @ApiBearerAuth('auth')
+  @Roles(UserRoles.Admin)
   @Post()
   @UseInterceptors(FileFieldsInterceptor([
     { name: 'image', maxCount: 1 },
     { name: 'icon', maxCount: 1 },
   ]))
   create(
-    @Body(new ValidationPipe({ whitelist : true})) createCategoryDto: CreateCategoryDto,
+    @Body(new ValidationPipe({ whitelist: true })) createCategoryDto: CreateCategoryDto,
     @UploadedFiles() files: { image: Express.Multer.File, icon: Express.Multer.File }
   ): Promise<ICategoryResponse> {
     createCategoryDto.icon = files.icon;
     createCategoryDto.image = files.image;
-    
+
     return this.categoryService.create(createCategoryDto);
   }
 
@@ -46,6 +49,7 @@ export class CategoryController {
     required: true,
     default: 1
   })
+  @Public()
   @Get()
   findAll(
     @Query(new ValidationPipe({ whitelist: true })) query: Params
@@ -54,6 +58,7 @@ export class CategoryController {
   }
 
   @ApiOperation({ summary: 'Get category by id' })
+  @Public()
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number): Promise<ICategoryResponse> {
     return this.categoryService.findOne(+id);
@@ -61,22 +66,22 @@ export class CategoryController {
 
   @ApiOperation({ summary: 'Update category by id' })
   @ApiConsumes('multipart/form-data')
-  @Patch(':id')
   @UseInterceptors(FileFieldsInterceptor([
     { name: 'image', maxCount: 1 },
     { name: 'icon', maxCount: 1 },
   ]))
+  @Roles(UserRoles.Admin)
+  @ApiBearerAuth('auth')
+  @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
-    @Body(new ValidationPipe({ whitelist : true })) updateCategoryDto: UpdateCategoryDto,
+    @Body(new ValidationPipe({ whitelist: true })) updateCategoryDto: UpdateCategoryDto,
     @UploadedFiles() files: {
       image: Express.Multer.File, icon: Express.Multer.File,
     }
   ): Promise<ICategoryResponse> {
     updateCategoryDto.icon = files.icon;
     updateCategoryDto.image = files.image;
-    console.log(updateCategoryDto);
-    
 
     return this.categoryService.update({
       id,
@@ -85,6 +90,8 @@ export class CategoryController {
   }
 
   @ApiOperation({ summary: 'Delete category by id' })
+  @Roles(UserRoles.Admin)
+  @ApiBearerAuth('auth')
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number): Promise<ICategoryResponse> {
     return this.categoryService.remove(id);

@@ -57,7 +57,11 @@ export class CreateProductItemDto implements ICreatePrRequest {
     })
     @IsArray()
     @Transform(({ value }) => {
-        return Array.isArray(value) ? value.map(Number) : [];
+        if (!value) return [];
+        if (Array.isArray(value)) {
+            return value.map(Number);
+        }
+        return [Number(value)];
     }, { toClassOnly: true })
     varations: number[]
 

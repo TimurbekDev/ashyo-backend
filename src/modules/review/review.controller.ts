@@ -1,8 +1,13 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { ReviewService } from './review.service';
 import { CreateReviewDto, UpdateReviewDto } from './dto';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Roles as UserRoles } from '@prisma/client';
+import { Roles } from '@decorators';
 
+@ApiTags('Reviews')
+@Roles(UserRoles.Admin,UserRoles.User)  
+@ApiBearerAuth('auth')
 @Controller('review')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}

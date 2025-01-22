@@ -88,9 +88,6 @@ export class CategoryService {
 
   async update(payload: IUpdateCategoryRequest): Promise<ICategoryResponse> {
 
-    console.log(payload);
-
-
     const existcategory = await this.findOne(payload.id);
 
     if (payload.image) {

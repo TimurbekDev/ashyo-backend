@@ -1,18 +1,12 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-//Modellar
-
 model Region {
   id         Int       @id @default(autoincrement())
   name       String
-  parent     Region?   @relation("ParentRegion", fields: [parentId], references: [id])
+  parent     Region?   @relation("ParentRegion", fields: [parentId], references: [id], onDelete: Cascade)
   children   Region[]  @relation("ParentRegion")
   parentId   Int?
   citiesIn   Address[] @relation("CityRegion")
@@ -21,11 +15,11 @@ model Region {
 
 model Address {
   id        Int     @id @default(autoincrement())
-  city      Region  @relation("CityRegion", fields: [cityId], references: [id])
-  village   Region  @relation("VillageRegion", fields: [villageId], references: [id])
+  city      Region  @relation("CityRegion", fields: [cityId], references: [id], onDelete: Cascade)
+  village   Region  @relation("VillageRegion", fields: [villageId], references: [id], onDelete: Cascade)
   cityId    Int
   villageId Int
-  user      User?   @relation(fields: [userId], references: [id])
+  user      User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int?
   Order     Order[] @relation("AdressOrder")
 }
@@ -50,7 +44,7 @@ model Category {
   name     String     @unique
   icon     String?
   image    String?
-  parent   Category?  @relation("ParentCategory", fields: [parentId], references: [id])
+  parent   Category?  @relation("ParentCategory", fields: [parentId], references: [id], onDelete: Cascade)
   parentId Int?
   children Category[] @relation("ParentCategory")
   Varation Varation[] @relation("Category")
@@ -60,7 +54,7 @@ model Category {
 model Varation {
   id             Int              @id @default(autoincrement())
   name           String           @unique
-  category       Category         @relation("Category", fields: [categoryId], references: [id])
+  category       Category         @relation("Category", fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId     Int
   VarationOption VarationOption[] @relation("Varation")
 }
@@ -68,7 +62,7 @@ model Varation {
 model VarationOption {
   id             Int              @id @default(autoincrement())
   value          String
-  varation       Varation         @relation("Varation", fields: [varationId], references: [id])
+  varation       Varation         @relation("Varation", fields: [varationId], references: [id], onDelete: Cascade)
   varationId     Int
   ProductOptions ProductOptions[] @relation("ProductItemVO")
 }
@@ -77,19 +71,19 @@ model Product {
   id          Int           @id @default(autoincrement())
   name        String        @unique
   description String
-  category    Category      @relation("ProductCategory", fields: [categoryId], references: [id])
+  category    Category      @relation("ProductCategory", fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId  Int
   image       String
   ProductItem ProductItem[] @relation("ProductProductItem")
   Review      Review[]      @relation("ProductRe")
-  brend       Brend         @relation(fields: [brendId], references: [id])
+  brend       Brend         @relation("BrendProduct", fields: [brendId], references: [id], onDelete: Cascade)
   brendId     Int
   Like        Like[]        @relation("ProductLike")
 }
 
 model Cart {
   id       Int        @id @default(autoincrement())
-  user     User       @relation("UserCart", fields: [userId], references: [id])
+  user     User       @relation("UserCart", fields: [userId], references: [id], onDelete: Cascade)
   userId   Int
   CartItem CartItem[] @relation("CartCartItem")
 }
@@ -97,8 +91,8 @@ model Cart {
 model Review {
   id        Int     @id @default(autoincrement())
   content   String
-  product   Product @relation("ProductRe", fields: [productId], references: [id])
-  user      User    @relation("UserRe", fields: [userId], references: [id])
+  product   Product @relation("ProductRe", fields: [productId], references: [id], onDelete: Cascade)
+  user      User    @relation("UserRe", fields: [userId], references: [id], onDelete: Cascade)
   productId Int
   userId    Int
 }
@@ -107,7 +101,7 @@ model Brend {
   id      Int       @id @default(autoincrement())
   name    String
   image   String
-  Product Product[]
+  Product Product[] @relation("BrendProduct")
 }
 
 model Color {
@@ -119,8 +113,8 @@ model Color {
 
 model Order {
   id         Int         @id @default(autoincrement())
-  adress     Address     @relation("AdressOrder", fields: [adressId], references: [id])
-  user       User        @relation("OrderUser", fields: [userId], references: [id])
+  adress     Address     @relation("AdressOrder", fields: [adressId], references: [id], onDelete: Cascade)
+  user       User        @relation("OrderUser", fields: [userId], references: [id], onDelete: Cascade)
   userId     Int
   adressId   Int
   status     OrderStatus @default(Pending)
@@ -131,8 +125,8 @@ model Order {
 model ProductItem {
   id             Int              @id @default(autoincrement())
   name           String           @unique
-  product        Product          @relation("ProductProductItem", fields: [productId], references: [id])
-  color          Color            @relation("ColorItem", fields: [colorId], references: [id])
+  product        Product          @relation("ProductProductItem", fields: [productId], references: [id], onDelete: Cascade)
+  color          Color            @relation("ColorItem", fields: [colorId], references: [id], onDelete: Cascade)
   colorId        Int
   productId      Int
   image          String
@@ -145,53 +139,46 @@ model ProductItem {
 
 model OrderItem {
   id            Int         @id @default(autoincrement())
-  productItem   ProductItem @relation("OrderItemProductItem", fields: [productItemId], references: [id])
-  order         Order       @relation("OrderProduct", fields: [orderId], references: [id])
+  productItem   ProductItem @relation("OrderItemProductItem", fields: [productItemId], references: [id], onDelete: Cascade)
+  order         Order       @relation("OrderProduct", fields: [orderId], references: [id], onDelete: Cascade)
   productItemId Int
   orderId       Int
   quantity      Int
 }
 
-//tepadagilar bajarilgan
-
 model CartItem {
   id            Int         @id @default(autoincrement())
-  cart          Cart        @relation("CartCartItem", fields: [cartId], references: [id])
+  cart          Cart        @relation("CartCartItem", fields: [cartId], references: [id], onDelete: Cascade)
   cartId        Int
-  productItem   ProductItem @relation("CartProductItem", fields: [productItemId], references: [id])
+  productItem   ProductItem @relation("CartProductItem", fields: [productItemId], references: [id], onDelete: Cascade)
   productItemId Int
   count         Int
 }
 
 model Like {
   id        Int     @id @default(autoincrement())
-  product   Product @relation("ProductLike", fields: [productId], references: [id])
-  user      User    @relation("UserLike", fields: [userId], references: [id])
+  product   Product @relation("ProductLike", fields: [productId], references: [id], onDelete: Cascade)
+  user      User    @relation("UserLike", fields: [userId], references: [id], onDelete: Cascade)
   productId Int
   userId    Int
 }
 
-//Pastdagilar bajarilishi shart emas
-
 model ProductOptions {
-  variantOption   VarationOption @relation("ProductItemVO", fields: [variantOptionId], references: [id])
-  productItem     ProductItem    @relation("ProductItemPO", fields: [productItemId], references: [id])
+  variantOption   VarationOption @relation("ProductItemVO", fields: [variantOptionId], references: [id], onDelete: Cascade)
+  productItem     ProductItem    @relation("ProductItemPO", fields: [productItemId], references: [id], onDelete: Cascade)
   productItemId   Int
   variantOptionId Int
 
   @@id([productItemId, variantOptionId])
 }
 
-// Enums
-
 enum OrderStatus {
-  Delivered
   Pending
+  Delivered
   Cancelled
 }
 
 enum Roles {
-  Admin
   User
-  UnAuth
+  Admin
 }

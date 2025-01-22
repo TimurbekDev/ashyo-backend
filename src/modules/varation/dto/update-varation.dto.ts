@@ -6,7 +6,7 @@ export class UpdateVarationDto implements Omit<IUpdateVarationRequest, 'id'> {
 
     @ApiProperty({
         description: 'Enter Varation name ',
-        default: 'Redmi 13',
+        default: 'Ram',
         required: false
     })
     @IsOptional()

@@ -6,7 +6,7 @@ export class CreateVarationDto implements ICreateVarationRequest {
 
     @ApiProperty({
         description : 'Enter Varation name ',
-        default : 'Redmi 13',
+        default : 'Ram',
         required : true
     })
     @IsNotEmpty()
