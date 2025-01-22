@@ -10,17 +10,23 @@ async function startApp() {
   });
 
   const config = new DocumentBuilder()
-  .setTitle('Ashyo')
+  .setTitle('Ashyo E-Commerce API')
+  .setDescription(
+    'This is the API documentation for the <em><b>Ashyo</b></em> e-commerce platform.</br>It provides endpoints to manage products, categories, users, orders, and other resources essential for an e-commerce system.</br>The API supports features like user authentication, product management, order processing, and more.</br>Utilize the Bearer token for secure access to the protected endpoints.'
+  )
   .setVersion('1.0')
-  
-  .addBearerAuth({
-    type: 'http',
-    scheme: 'Bearer',
-    bearerFormat: 'JWT',
-    name: 'JWT',
-    description: 'Enter JWT token',
-  }, 'auth')
+  .addBearerAuth(
+    {
+      type: 'http',
+      scheme: 'Bearer',
+      bearerFormat: 'JWT',
+      name: 'JWT',
+      description: 'Enter JWT token',
+    },
+    'auth',
+  )
   .build();
+
   
   const documentFactory = () => SwaggerModule.createDocument(app, config);
 

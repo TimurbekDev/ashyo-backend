@@ -82,8 +82,6 @@ export class CategoryController {
   ): Promise<ICategoryResponse> {
     updateCategoryDto.icon = files.icon;
     updateCategoryDto.image = files.image;
-    console.log(updateCategoryDto);
-
 
     return this.categoryService.update({
       id,

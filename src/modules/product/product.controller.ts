@@ -14,7 +14,7 @@ import { Public, Roles } from '@decorators';
 export class ProductController {
   constructor(private readonly productService: ProductService) { }
 
-  @ApiOperation({summary: "Create product"})
+  @ApiOperation({ summary: "Create product" })
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(FileInterceptor("image"))
   @Roles(UserRoles.Admin)
@@ -23,34 +23,18 @@ export class ProductController {
   create(
     @Body(new ValidationPipe({
       whitelist: true,
-      transform: true,
-      transformOptions: {
-        enableImplicitConversion: true
-      },
-      exceptionFactory: (error)=>{
-        console.log(error)
-      }
     })) createProductDto: CreateProductDto,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    console.log(image)
     createProductDto.image = image
     return this.productService.create(createProductDto);
   }
 
   @ApiQuery({
-    type : Number,
-    description : 'page',
-    name : 'page',
-    default: 1,
-    required : true
-  })
-  @ApiQuery({
-    type : Number,
-    description : 'limit',
-    name : 'limit',
-    default: 100,
-    required : true
+    description: 'Varaion-Options id',
+    name : 'varationOptionIds',
+    required : false,
+    type: [Number],
   })
   @ApiQuery({
     type: String,
@@ -78,21 +62,40 @@ export class ProductController {
     name: "minPrice",
     required: false,
   })
+  @ApiQuery({
+    type: Number,
+    description: 'limit',
+    name: 'limit',
+    default: 100,
+    required: true
+  })
+  @ApiQuery({
+    type: Number,
+    description: 'page',  
+    name: 'page',
+    default: 1,
+    required: true
+  })
   @ApiOperation({
-    summary : 'Get all products '
+    summary: 'Get all products '
   })
   @Public()
   @Get()
   findAll(
-    @Query(new ValidationPipe({whitelist: true})) params: ProductFilterDto,
+    @Query(new ValidationPipe({ whitelist: true })) params: ProductFilterDto,
   ) {
-    console.log(params)
     return this.productService.findAll(params);
   }
 
   @Public()
+  @Get('/most-populars')
+  findPopularProducts() {
+    return this.productService.findPopulatProducts();
+  }
+
+  @Public()
   @ApiOperation({
-    summary : 'Get product by id '
+    summary: 'Get product by id '
   })
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -101,7 +104,7 @@ export class ProductController {
 
   @Roles(UserRoles.Admin)
   @ApiOperation({
-    summary : 'Update product by id '
+    summary: 'Update product by id '
   })
   @ApiBearerAuth('auth')
   @Patch(':id')
@@ -114,7 +117,7 @@ export class ProductController {
 
   @Roles(UserRoles.Admin)
   @ApiOperation({
-    summary : 'Delete product by id '
+    summary: 'Delete product by id '
   })
   @ApiBearerAuth('auth')
   @Delete(':id')

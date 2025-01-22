@@ -6,7 +6,7 @@ export class CreateVarationOptionDto implements ICreateVoRequest {
 
     @ApiProperty({
         description : 'Varation Option value',
-        example : 'RAM 5',
+        example : '8',
         required : true
     })
     @IsNotEmpty()

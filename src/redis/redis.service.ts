@@ -11,30 +11,26 @@ export declare interface ISetText {
 export class RedisCacheService {
   private client: Redis;
 
-  constructor() {
-    this.client = new Redis({
-      host: process.env.REDIS_HOST || '127.0.0.1',
-      port: parseInt(process.env.REDIS_PORT || '6379', 10),
-    });
+  async get(key: string): Promise<string | null> {
+    return await this.client.get(key);
   }
 
-  async getByUrl(url: string): Promise<any | null> {
-    const cachedData = await this.client.get(url);
-    return cachedData ? JSON.parse(cachedData) : null;
+  async set(key: string, value: string, ttl: number): Promise<void> {
+    await this.client.set(key, value, 'EX', ttl);
   }
 
-  async setByUrl(url: string, value: any, ttl: number): Promise<void> {
-    await this.client.set(url, JSON.stringify(value), 'EX', ttl);
+  async incr(key: string): Promise<number> {
+    return await this.client.incr(key);
   }
 
-  async deleteByUrl(url: string): Promise<void> {
-    await this.client.del(url);
+  async expire(key: string, ttl: number): Promise<void> {
+    await this.client.expire(key, ttl);
   }
 
   async setByText(payload: ISetText): Promise<void> {
     await this.client.set(payload.key, payload.value, 'EX', payload.time);
   }
-  
+
   async getByText(key: string): Promise<string | null> {
 
     return await this.client.get(key);
@@ -43,5 +39,5 @@ export class RedisCacheService {
   async deleteByText(key: string): Promise<void> {
     await this.client.del(key);
   }
-  
+
 }

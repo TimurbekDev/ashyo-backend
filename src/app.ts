@@ -1,16 +1,14 @@
 import { Module } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PrismaModule } from '@prisma';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { RedisModule } from '@nestjs-modules/ioredis';
-import { appConfig, jwtConfig, redisConfig } from '@config';
-import { AddressModule, AuthModule, CartItemModule, CartModule, CategoryModule, ColorModule, JwtCustomModule, OrderItemModule, OrderModule, ProductItemModule, RegionModule, ReviewModule, UsersModule, VarationModule, VarationOptionModule } from '@modules';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { mailerConfig } from './config/mailer-config';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { appConfig, jwtConfig, mailerConfig, redisConfig, throttleConfig } from '@config';
+import { AddressModule, AuthModule, BrandModule, CartItemModule, CartModule, CategoryModule, ColorModule, JwtCustomModule, LikeModule, OrderItemModule, OrderModule, ProductItemModule, ProductModule, RegionModule, ReviewModule, UsersModule, VarationModule, VarationOptionModule } from '@modules';
 import { SeedsModule } from './seeds';
-import { ProductModule } from './modules/product/product.module';
-import { BrandModule } from './modules/brand';
-import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard, RolesGuard } from '@guards';
 
 
@@ -18,7 +16,7 @@ import { AuthGuard, RolesGuard } from '@guards';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, mailerConfig, jwtConfig,redisConfig]
+      load: [appConfig, mailerConfig, jwtConfig,redisConfig,throttleConfig]
 
     }),
 
@@ -46,6 +44,14 @@ import { AuthGuard, RolesGuard } from '@guards';
           port: config.get<number>('redis.port')
         }
       })
+    }),
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => [{
+        ttl:config.get<number>('throttle.ttl'),
+        limit:config.get<number>('throttle.limit')
+      }]
     }),
     ServeStaticModule.forRoot(
       {
@@ -79,6 +85,7 @@ import { AuthGuard, RolesGuard } from '@guards';
     ProductItemModule,
     OrderItemModule,
     CartItemModule,
+    LikeModule
   ],
   providers : [
     {
@@ -88,6 +95,10 @@ import { AuthGuard, RolesGuard } from '@guards';
     {
       provide : APP_GUARD,
       useClass : RolesGuard
+    },
+    {
+      provide : APP_GUARD,
+      useClass : ThrottlerGuard
     }
   ]
 })

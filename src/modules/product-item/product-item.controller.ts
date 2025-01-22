@@ -21,14 +21,9 @@ export class ProductItemController {
   @ApiBearerAuth('auth')
   @Post()
   create(
-    @Body(new ValidationPipe({
-      whitelist: true, transform: true, exceptionFactory: (error) => {
-        console.log(error)
-      }
-    })) createProductItemDto: CreateProductItemDto,
+    @Body(new ValidationPipe({whitelist : true})) createProductItemDto: CreateProductItemDto,
     @UploadedFile() file: Express.Multer.File
   ) {
-    console.log(createProductItemDto.varations)
     createProductItemDto.image = file
     return this.productItemService.create(createProductItemDto);
   }

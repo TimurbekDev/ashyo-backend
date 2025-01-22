@@ -41,43 +41,94 @@ export class ProductService {
   }
 
   async findAll(query: IProductFilter): Promise<IProductResponse> {
-    console.log(query)
-    const products = await this.prismaService.product.findMany({
-      where: {
-        name: query.search ? {contains: query.search, mode: "insensitive"} : undefined,
-        categoryId: query.categoryId ? query.categoryId : undefined,
-        ProductItem : {
-          some : {
-            price : {
-              gte: query.minPrice || undefined,
-              lte: query.maxPrice || undefined,
+
+    const {
+      search,
+      categoryId,
+      minPrice,
+      maxPrice,
+      varationOptionIds,
+      page = PAGE,
+      limit = LIMIT
+    } = query;
+
+    const whereCondition: any = {};
+
+    if (search) {
+      whereCondition.name = { contains: search, mode: "insensitive" };
+    }
+
+    if (categoryId) {
+      whereCondition.categoryId = categoryId;
+    }
+
+    if (minPrice || maxPrice || varationOptionIds) {
+      whereCondition.ProductItem = {
+        some: {
+          price: {
+            ...(minPrice ? { gte: minPrice } : {}),
+            ...(maxPrice ? { lte: maxPrice } : {}),
+          },
+          ProductOptions: {
+            every: {
+              variantOptionId: {
+                in: varationOptionIds || undefined
+              }
             }
           }
-        }
-      },
-      skip: ((query.page || PAGE) - 1) * (query.limit || PAGE),
-      take: query.limit || LIMIT
+        },
+      };
+    }
+
+    const productsPromise = this.prismaService.product.findMany({
+      where: whereCondition,
+      skip: (page - 1) * limit,
+      take: limit,
     });
 
-    const totalCount = await this.prismaService.product.count({
-      where: {
-        name: query.search ? {contains: query.search, mode: "insensitive"} : undefined,
-        categoryId: query.categoryId ? query.categoryId : undefined,
-        ProductItem : {
-          some : {
-            price : {
-              gte: query.minPrice || undefined,
-              lte: query.maxPrice || undefined,
-            }
-          }
-        }
-      }
-    })
+    const totalCountPromise = this.prismaService.product.count({
+      where: whereCondition,
+    });
+
+    const [products, totalCount] = await Promise.all([productsPromise, totalCountPromise]);
+
     return {
-      message: 'All Productss retrieved',
+      message: 'All Products retrieved',
       totalCount,
-      products: products,
+      products,
     };
+  }
+
+  async findPopulatProducts(): Promise<IProductResponse> {
+
+    const popularProducts = await this.prismaService.like.groupBy({
+      by: ['productId'],
+      _count: {
+        productId: true,
+      },
+      orderBy: {
+        _count: {
+          productId: 'desc',
+        },
+      },
+    });
+
+    const productsWithDetails = await Promise.all(
+      popularProducts.map(async (entry) => {
+        const product = await this.prismaService.product.findUnique({
+          where: { id: entry.productId },
+        });
+        return {
+          ...product,
+          likeCount: entry._count.productId,
+        };
+      })
+    );
+
+    return {
+      message : 'Popular products',
+      products : productsWithDetails
+    }
   }
 
   async findOne(id: number): Promise<IProductResponse> {

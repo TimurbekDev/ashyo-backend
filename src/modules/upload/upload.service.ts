@@ -52,14 +52,12 @@ export class UploadService {
     const filePath = path.join(__dirname, '../../../uploads/', payload.fileName);
   
     if (!existsSync(filePath)) {
-      console.log(filePath)
       throw new NotFoundException("File Not Fount")
     }
 
     try {
       await fs.unlink(filePath);
     } catch (error) {
-      console.log(error)
       throw new Error('Error deleting file: ' + error.message);
     }
 

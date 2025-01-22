@@ -18,12 +18,11 @@ export class ProductItemService {
 
   async create(payload: ICreatePrRequest): Promise<IProductItemResponse> {
 
-    let varationOptionIds: number[] = payload.varations
+    let varationOptionIds: number[] = payload.varations;
 
     delete payload.varations;
 
     await this.productService.findOne(payload.productId);
-    console.log(payload);
     
     await this.colorService.findOne(payload.colorId)
 
@@ -44,12 +43,13 @@ export class ProductItemService {
     });
 
     varationOptionIds.map(async (id) => {
+      
       await this.prismaService.productOptions.create({
         data: {
           productItemId: productItem.id,
           variantOptionId: id
         }
-      });
+      });      
     })
 
     return {
