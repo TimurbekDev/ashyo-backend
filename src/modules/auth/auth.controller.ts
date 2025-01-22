@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ForgotPasswordDto, ResetPasswordDto, SignInDto, SignUpDto } from './dto';
 import { Public } from '@decorators';
-// import { AuthGuard } from '@nestjs/passport';
+import { ForgotPasswordDto, ResetPasswordDto, SignInDto, SignUpDto, VerifySendDto, VerifyUserDto } from './dto';
+
 
 @Public()
 @ApiTags('Auth')
@@ -34,4 +34,23 @@ export class AuthController {
   async resetPassword(@Body() resetPassDto: ResetPasswordDto) {
     return await this.authService.resetPassword(resetPassDto);
   }
+
+
+  @ApiOperation({summary: "Verification sender"})
+  @Post("verify-send")
+  async sendVerification(@Body() email: VerifySendDto){
+    return await this.authService.sendVerification(email)
+  }
+
+  @ApiOperation({ summary: "Verify user" })
+  @Get("verify-user")
+  async verifyUser(
+      @Query() payload: VerifyUserDto,
+  ): Promise<{ message: string }> {
+      return await this.authService.verifyUser(payload);
+  }
+  
+  
+  
+
 }

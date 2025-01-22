@@ -7,3 +7,5 @@ export declare interface IProductFilter {
     maxPrice?: number;
     varationOptionIds?:number[];
 }
+
+

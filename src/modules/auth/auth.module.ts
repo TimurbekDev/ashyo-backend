@@ -12,6 +12,6 @@ import { MailerCustomService } from '../mailer';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService,UserService,PrismaService,JwtCustomService,JwtService,ConfigService,UploadService,RedisCacheService,MailerCustomService]
+  providers: [AuthService,UserService,PrismaService,JwtCustomService,JwtService,ConfigService,UploadService,RedisCacheService,MailerCustomService,ConfigService]
 })
 export class AuthModule {}
