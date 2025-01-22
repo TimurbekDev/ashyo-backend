@@ -5,3 +5,4 @@ export * from './jwt.config'
 export * from './redis.config'
 export * from './throttle.config'
 export * from './mailer-config'
+export * from "./base.url.config"

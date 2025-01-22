@@ -42,6 +42,7 @@ export class ProductService {
 
   async findAll(query: IProductFilter): Promise<IProductResponse> {
 
+
     const {
       search,
       categoryId,
@@ -74,6 +75,7 @@ export class ProductService {
               variantOptionId: {
                 in: varationOptionIds || undefined
               }
+
             }
           }
         },

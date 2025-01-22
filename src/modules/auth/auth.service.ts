@@ -1,12 +1,14 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { IResetPasswordRequest, ISignInRequest, ISignUpRequest } from './interfaces';
-import { JwtCustomService } from '../jwt';
+import { JwtCustomService, TokenType } from '../jwt';
 import { compare, hash } from 'bcrypt';
 import { UserService } from '../user';
 import { RedisCacheService } from 'src/redis/redis.service';
 import { MailerCustomService } from '../mailer';
 import { PrismaService } from '@prisma';
 import { HASH_SALT } from '@config';
+import { VerifySendDto, VerifyUserDto } from './dto';
+import { ConfigService } from '@nestjs/config';
 
 
 
@@ -18,6 +20,7 @@ export class AuthService {
     @Inject(JwtCustomService) private jwtCustomService: JwtCustomService,
     @Inject(RedisCacheService) private redisService: RedisCacheService,
     @Inject(MailerCustomService) private mailerService: MailerCustomService,
+    @Inject(ConfigService) private configService: ConfigService
   ) { }
 
   async signUp(payload: ISignUpRequest) {
@@ -123,6 +126,70 @@ export class AuthService {
       message: 'Password Successully Updated'
     }
   }
+
+
+  async sendVerification(payload: VerifySendDto): Promise<{message: string,email: string}>{
+
+      const user = await this.userService.findByEmail(payload.email)
+      if(!user){
+        throw new NotFoundException("Verification failed, User not found")
+      }
+
+      if(user.isVerified){
+        throw new BadRequestException("User already verified")
+      }
+      const userVerifySendTime = await this.redisService.getByText(user.email)
+      if(userVerifySendTime){
+        throw new BadRequestException("Sorry, your attempt limit has been reached. Please try again later.")
+      }
+      const tokens = await this.jwtCustomService.generateTokens({
+        userId: user.id,
+        role: user.role,
+      })
+
+      const verifyUrl = `${this.configService.get<string>("baseUrl.BASE_URL")}/api/auth/verify-user?token=${tokens.access}&id=${user.id}`;
+
+      await this.mailerService.VerficationMail({
+        text: verifyUrl,
+        to: user.email,
+        subject: `Hi ${user.fullName} please click Verify me button`
+      })
+
+      await this.redisService.setByText({
+        key: user.email,
+        value: 1245,
+        time: 30*60*1000,
+      })
+      
+      return {
+        message: "Verification sended succesfully, check email",
+        email: user.email
+      }
+      
+  }
+
+
+
+  async verifyUser(payload: VerifyUserDto):Promise<{message: string}>{
+    await this.jwtCustomService.verifyToken(payload.token,TokenType.Access)
+    const user = await this.userService.findOne(Number(payload.id))
+    if(!user){
+      throw new NotFoundException("Verification failed, User not found")
+    }
+    await this.prismaService.user.update({
+      where: {id: Number(payload.id)},
+      data: {
+        isVerified: true,
+      }
+    })
+
+    return {
+      message: "User verfied successfully"
+    }
+  }
+
+
+
 
   #generateOtp = (length = 6) => {
     const digits = '0123456789';
