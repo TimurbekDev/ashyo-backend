@@ -27,7 +27,7 @@ export class CategoryController {
     @UploadedFiles() files: { image: Express.Multer.File, icon: Express.Multer.File }
   ): Promise<ICategoryResponse> {
     createCategoryDto.icon = files.icon;
-    createCategoryDto.image = files.image;
+    createCategoryDto.image = files.image;    
 
     return this.categoryService.create(createCategoryDto);
   }

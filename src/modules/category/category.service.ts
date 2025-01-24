@@ -52,11 +52,8 @@ export class CategoryService {
       skip: ((filter.page || 1) - 1) * (filter.limit || 10),
       include: {
         children: {
-          select: {
-            id: true,
-            name: true,
-            icon: true,
-            image: true
+          include:{
+            children: true
           }
         }
       },

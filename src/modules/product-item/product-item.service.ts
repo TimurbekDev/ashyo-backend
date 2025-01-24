@@ -62,7 +62,23 @@ export class ProductItemService {
 
     const productItems = await this.prismaService.productItem.findMany({
       skip: (query.page - 1) * 10,
-      take: query.limit
+      take: query.limit,
+      include : {
+        ProductOptions : {
+          select : {
+            variantOption : {
+              select : {
+                value : true,
+                varation : {
+                  select : {
+                    name : true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     });
 
     return {

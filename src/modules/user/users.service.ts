@@ -56,6 +56,9 @@ export class UserService {
   async findOne(id: number): Promise<IUserResponse> {
     const user = await this.prismaService.user.findFirst({
       where: { id: +id },
+      include : {
+        addresses: true
+      }
     });
 
     if (!user) throw new NotFoundException('User not found');

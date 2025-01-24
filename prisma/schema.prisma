@@ -13,7 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model Rate {
   id        Int     @id @default(autoincrement())
   product   Product @relation("ProductRate", fields: [productId], references: [id], onDelete: Cascade)
@@ -21,7 +20,7 @@ model Rate {
   productId Int
   userId    Int
   value     Int
-} 
+}
 
 model Region {
   id         Int       @id @default(autoincrement())
@@ -101,6 +100,7 @@ model Product {
   brendId     Int
   Like        Like[]        @relation("ProductLike")
   Rate        Rate[]        @relation("ProductRate")
+  Banner      Banner[]      @relation("BannerProduct")
 }
 
 model Cart {
@@ -194,6 +194,15 @@ model ProductOptions {
   @@id([productItemId, variantOptionId])
 }
 
+model Banner {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  description String
+  product     Product @relation("BannerProduct", fields: [productId], references: [id])
+  productId   Int
+  image       String
+}
+
 enum OrderStatus {
   Pending
   Delivered
@@ -204,4 +213,3 @@ enum Roles {
   User
   Admin
 }
-
