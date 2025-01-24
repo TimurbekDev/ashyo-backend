@@ -18,6 +18,8 @@ export class CategoryService {
 
   async create(payload: CreateCategoryDto): Promise<ICategoryResponse> {
 
+    const parentId = +payload.parentId;
+
     const imageOtions = await this.uploadService.uploadFile({
       file: payload.image,
       destination: 'categories',
@@ -30,6 +32,7 @@ export class CategoryService {
     const newCategory = await this.prismaService.category.create({
       data: {
         ...payload,
+        parentId,
         image: imageOtions.imageUrl,
         icon: iconOptions.imageUrl,
       },

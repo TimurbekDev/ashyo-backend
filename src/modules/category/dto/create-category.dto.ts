@@ -17,10 +17,9 @@ export class CreateCategoryDto implements ICreateCategoryRequest {
     @ApiProperty({
         description: 'Parent category Id',
         required: false,
-        type: Number
+        type: Number,
     })
     @IsNumber()
-    @Transform(({ value }) => parseInt(value))
     parentId: number;
 
 

@@ -23,7 +23,7 @@ export class CategoryController {
     { name: 'icon', maxCount: 1 },
   ]))
   create(
-    @Body(new ValidationPipe({ whitelist: true })) createCategoryDto: CreateCategoryDto,
+    @Body() createCategoryDto: CreateCategoryDto,
     @UploadedFiles() files: { image: Express.Multer.File, icon: Express.Multer.File }
   ): Promise<ICategoryResponse> {
     createCategoryDto.icon = files.icon;
