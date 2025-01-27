@@ -18,6 +18,7 @@ export class UploadService {
     if(isArray(payload.file)){
       payload.file = payload.file[0];
     }
+    
     const extName = path.extname(payload.file.originalname);
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     const fileName = payload.file.fieldname + '-' + uniqueSuffix + extName;
@@ -49,7 +50,13 @@ export class UploadService {
   }
 
   async deleteFile(payload: RemoveFileRequest): Promise<RemoveFileResponse> {
+    if(payload.fileName == null){
+      return {
+        message: 'File not found',
+      }
+    }
     const filePath = path.join(__dirname, '../../../uploads/', payload.fileName);
+  
   
     if (!existsSync(filePath)) {
       throw new NotFoundException("File Not Fount")
