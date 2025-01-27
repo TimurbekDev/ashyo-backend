@@ -68,12 +68,12 @@ export class BrandService {
 
     let updatedImage = findBrand.image;
     if (updateBrandDto.image) {
-      await this.uploadService.deleteFile({ fileName: findBrand.image });
       const newImageOptions = await this.uploadService.uploadFile({
         file: updateBrandDto.image,
         destination: 'brand',
       });
       updatedImage = newImageOptions.imageUrl;
+      await this.uploadService.deleteFile({ fileName: findBrand.image });
     }
 
     const updatedBrand = await this.prismaService.brend.update({
@@ -98,6 +98,10 @@ export class BrandService {
     if (!findBrand) {
       throw new NotFoundException('Brand not found');
     }
+
+    await this.prismaService.brend.delete({
+      where: { id },
+    })
 
     await this.uploadService.deleteFile({fileName: findBrand.image})
     return {
