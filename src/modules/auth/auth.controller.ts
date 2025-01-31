@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from '@decorators';
 import { ForgotPasswordDto, ResetPasswordDto, SignInDto, SignUpDto, VerifySendDto, VerifyUserDto } from './dto';
+import { RefreshTokenDto } from './dto/refreshToken.dto';
 
 
 @Public()
@@ -51,7 +52,9 @@ export class AuthController {
       return await this.authService.verifyUser(payload);
   }
   
-  
-  
-
+  @ApiOperation({ summary : 'Refersh Access Token : '})
+  @Post('/refrsh-access-token')
+  async refreshAccessToken(@Body() refreshTokenDto:RefreshTokenDto ){
+    return await this.authService.refreshToken(refreshTokenDto.refreshToken);
+  }
 }

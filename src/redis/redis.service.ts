@@ -4,8 +4,8 @@ import { Redis } from 'ioredis';
 
 export declare interface ISetText {
   key: string,
-  value: number,
-  time: number
+  value: number | string,
+  time?: number
 }
 
 @Injectable()
