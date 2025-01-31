@@ -90,6 +90,7 @@ import { MeModule } from './modules/me/me.module';
     LikeModule,
     RateModule,
     MeModule,
+    MailerModule,
   ],
   providers : [
     {
