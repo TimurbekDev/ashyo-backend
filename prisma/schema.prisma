@@ -40,7 +40,7 @@ model Address {
   villageId Int
   user      User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int?
-  Order     Order[] @relation("AdressOrder")
+  orders    Order[] @relation("AdressOrder")
 }
 
 model User {
@@ -55,28 +55,28 @@ model User {
   Cart       Cart[]    @relation("UserCart")
   Review     Review[]  @relation("UserRe")
   Like       Like[]    @relation("UserLike")
-  Order      Order[]   @relation("OrderUser")
-  Rate       Rate[]    @relation("UserRate")
+  orders     Order[]   @relation("OrderUser")
+  rates      Rate[]    @relation("UserRate")
 }
 
 model Category {
-  id       Int        @id @default(autoincrement())
-  name     String     @unique
-  icon     String?
-  image    String?
-  parent   Category?  @relation("ParentCategory", fields: [parentId], references: [id], onDelete: Cascade)
-  parentId Int?
-  children Category[] @relation("ParentCategory")
-  Varation Varation[] @relation("Category")
-  Product  Product[]  @relation("ProductCategory")
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  icon      String?
+  image     String?
+  parent    Category?  @relation("ParentCategory", fields: [parentId], references: [id], onDelete: Cascade)
+  parentId  Int?
+  children  Category[] @relation("ParentCategory")
+  varations Varation[] @relation("Category")
+  products  Product[]  @relation("ProductCategory")
 }
 
 model Varation {
-  id             Int              @id @default(autoincrement())
-  name           String           @unique
-  category       Category         @relation("Category", fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId     Int
-  VarationOption VarationOption[] @relation("Varation")
+  id              Int              @id @default(autoincrement())
+  name            String           @unique
+  category        Category         @relation("Category", fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId      Int
+  varationOptions VarationOption[] @relation("Varation")
 }
 
 model VarationOption {
@@ -84,29 +84,29 @@ model VarationOption {
   value          String
   varation       Varation         @relation("Varation", fields: [varationId], references: [id], onDelete: Cascade)
   varationId     Int
-  ProductOptions ProductOptions[] @relation("ProductItemVO")
+  productOptions ProductOptions[] @relation("ProductItemVO")
 }
 
 model Product {
-  id          Int           @id @default(autoincrement())
-  name        String        @unique
-  description String
-  category    Category      @relation("ProductCategory", fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId  Int
-  image       String
-  ProductItem ProductItem[] @relation("ProductProductItem")
-  Review      Review[]      @relation("ProductRe")
-  brend       Brend         @relation("BrendProduct", fields: [brendId], references: [id], onDelete: Cascade)
-  brendId     Int
-  Rate        Rate[]        @relation("ProductRate")
-  Banner      Banner[]      @relation("BannerProduct")
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  description  String
+  category     Category      @relation("ProductCategory", fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId   Int
+  image        String
+  productItems ProductItem[] @relation("ProductProductItem")
+  reviews      Review[]      @relation("ProductRe")
+  brend        Brend         @relation("BrendProduct", fields: [brendId], references: [id], onDelete: Cascade)
+  brendId      Int
+  Rate         Rate[]        @relation("ProductRate")
+  banners      Banner[]      @relation("BannerProduct")
 }
 
 model Cart {
-  id       Int        @id @default(autoincrement())
-  user     User       @relation("UserCart", fields: [userId], references: [id], onDelete: Cascade)
-  userId   Int
-  CartItem CartItem[] @relation("CartCartItem")
+  id        Int        @id @default(autoincrement())
+  user      User       @relation("UserCart", fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  cartItems CartItem[] @relation("CartCartItem")
 }
 
 model Review {
@@ -119,17 +119,17 @@ model Review {
 }
 
 model Brend {
-  id      Int       @id @default(autoincrement())
-  name    String
-  image   String
-  Product Product[] @relation("BrendProduct")
+  id       Int       @id @default(autoincrement())
+  name     String
+  image    String
+  products Product[] @relation("BrendProduct")
 }
 
 model Color {
-  id          Int           @id @default(autoincrement())
-  name        String
-  code        String
-  ProductItem ProductItem[] @relation("ColorItem")
+  id           Int           @id @default(autoincrement())
+  name         String
+  code         String
+  productItems ProductItem[] @relation("ColorItem")
 }
 
 model Order {
@@ -139,7 +139,7 @@ model Order {
   userId     Int
   adressId   Int
   status     OrderStatus @default(Pending)
-  OrderItem  OrderItem[] @relation("OrderProduct")
+  orderItems OrderItem[] @relation("OrderProduct")
   totalPrice Float
 }
 
@@ -153,10 +153,10 @@ model ProductItem {
   image          String
   quantity       Int
   price          Float
-  CartItem       CartItem[]       @relation("CartProductItem")
-  OrderItem      OrderItem[]      @relation("OrderItemProductItem")
-  ProductOptions ProductOptions[] @relation("ProductItemPO")
-  Like           Like[]           @relation("ProductItemLike")
+  cartItems      CartItem[]       @relation("CartProductItem")
+  orderItems     OrderItem[]      @relation("OrderItemProductItem")
+  productOptions ProductOptions[] @relation("ProductItemPO")
+  likes          Like[]           @relation("ProductItemLike")
 }
 
 model OrderItem {
@@ -181,7 +181,7 @@ model Like {
   id            Int         @id @default(autoincrement())
   productItem   ProductItem @relation("ProductItemLike", fields: [productItemId], references: [id], onDelete: Cascade)
   user          User        @relation("UserLike", fields: [userId], references: [id], onDelete: Cascade)
-  productItemId Int @default(1)
+  productItemId Int         @default(1)
   userId        Int
 }
 

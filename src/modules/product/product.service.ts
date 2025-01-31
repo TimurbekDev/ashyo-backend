@@ -87,7 +87,7 @@ export class ProductService {
       skip: (page - 1) * limit,
       take: limit,
       include: {
-        ProductItem: true
+        productItems: true
       }
     });
 

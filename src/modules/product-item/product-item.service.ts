@@ -64,7 +64,7 @@ export class ProductItemService {
       skip: (query.page - 1) * 10,
       take: query.limit,
       include : {
-        ProductOptions : {
+        productOptions : {
           select : {
             variantOption : {
               select : {
