@@ -104,37 +104,37 @@ export class ProductService {
     };
   }
 
-  async findPopulatProducts(): Promise<IProductResponse> {
+  // async findPopulatProducts(): Promise<IProductResponse> {
 
-    const popularProducts = await this.prismaService.like.groupBy({
-      by: ['productId'],
-      _count: {
-        productId: true,
-      },
-      orderBy: {
-        _count: {
-          productId: 'desc',
-        },
-      },
-    });
+  //   const popularProducts = await this.prismaService.like.groupBy({
+  //     by: ['productId'],
+  //     _count: {
+  //       productId: true,
+  //     },
+  //     orderBy: {
+  //       _count: {
+  //         productId: 'desc',
+  //       },
+  //     },
+  //   });
 
-    const productsWithDetails = await Promise.all(
-      popularProducts.map(async (entry) => {
-        const product = await this.prismaService.product.findUnique({
-          where: { id: entry.productId },
-        });
-        return {
-          ...product,
-          likeCount: entry._count.productId,
-        };
-      })
-    );
+  //   const productsWithDetails = await Promise.all(
+  //     popularProducts.map(async (entry) => {
+  //       const product = await this.prismaService.product.findUnique({
+  //         where: { id: entry.productId },
+  //       });
+  //       return {
+  //         ...product,
+  //         likeCount: entry._count.productId,
+  //       };
+  //     })
+  //   );
 
-    return {
-      message: 'Popular products',
-      products: productsWithDetails
-    }
-  }
+  //   return {
+  //     message: 'Popular products',
+  //     products: productsWithDetails
+  //   }
+  // }
 
   async findOne(id: number): Promise<IProductResponse> {
 

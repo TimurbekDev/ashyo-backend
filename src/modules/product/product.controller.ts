@@ -87,11 +87,11 @@ export class ProductController {
     return this.productService.findAll(params);
   }
 
-  @Public()
-  @Get('/most-populars')
-  findPopularProducts() {
-    return this.productService.findPopulatProducts();
-  }
+  // @Public()
+  // @Get('/most-populars')
+  // findPopularProducts() {
+  //   return this.productService.findPopulatProducts();
+  // }
 
   @Public()
   @ApiOperation({
