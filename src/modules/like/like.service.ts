@@ -1,21 +1,21 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma';
-import { ProductService } from '../product/product.service';
 import { UserService } from '../user';
 import { ICreateLikeRequest, ILikeResponse, IUpdateLikeRequest } from './interfaces';
+import { ProductItemService } from '../product-item';
 
 @Injectable()
 export class LikeService {
 
   constructor(
     @Inject(PrismaService) private readonly prismaService: PrismaService,
-    @Inject(ProductService) private readonly productService: ProductService,
+    @Inject(ProductItemService) private readonly productItemService: ProductItemService,
     @Inject(UserService) private readonly userService: UserService
   ) { }
 
   async create(payload: ICreateLikeRequest): Promise<ILikeResponse> {
 
-    await this.productService.findOne(payload.productId);
+    await this.productItemService.findOne(payload.productItemId);
     await this.userService.findOne(payload.userId);
 
     const like = await this.prismaService.like.create({ data: payload });

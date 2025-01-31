@@ -98,7 +98,6 @@ model Product {
   Review      Review[]      @relation("ProductRe")
   brend       Brend         @relation("BrendProduct", fields: [brendId], references: [id], onDelete: Cascade)
   brendId     Int
-  Like        Like[]        @relation("ProductLike")
   Rate        Rate[]        @relation("ProductRate")
   Banner      Banner[]      @relation("BannerProduct")
 }
@@ -157,6 +156,7 @@ model ProductItem {
   CartItem       CartItem[]       @relation("CartProductItem")
   OrderItem      OrderItem[]      @relation("OrderItemProductItem")
   ProductOptions ProductOptions[] @relation("ProductItemPO")
+  Like           Like[]           @relation("ProductItemLike")
 }
 
 model OrderItem {
@@ -178,11 +178,11 @@ model CartItem {
 }
 
 model Like {
-  id        Int     @id @default(autoincrement())
-  product   Product @relation("ProductLike", fields: [productId], references: [id], onDelete: Cascade)
-  user      User    @relation("UserLike", fields: [userId], references: [id], onDelete: Cascade)
-  productId Int
-  userId    Int
+  id            Int         @id @default(autoincrement())
+  productItem   ProductItem @relation("ProductItemLike", fields: [productItemId], references: [id], onDelete: Cascade)
+  user          User        @relation("UserLike", fields: [userId], references: [id], onDelete: Cascade)
+  productItemId Int @default(1)
+  userId        Int
 }
 
 model ProductOptions {

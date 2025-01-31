@@ -120,7 +120,6 @@ export class CategoryService {
     }
   }
 
-
   async remove(id: number): Promise<ICategoryResponse> {
     await this.findOne(id);
 

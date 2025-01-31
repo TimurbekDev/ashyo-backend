@@ -7,12 +7,12 @@ import { ApiProperty } from '@nestjs/swagger';
 export class UpdateLikeDto implements Omit<IUpdateLikeRequest, 'id'> {
 
     @ApiProperty({
-        description: 'Product Id',
+        description: 'Product Item Id',
         default: 1,
     })
     @IsOptional()
     @IsNumber()
-    productId: number;
+    productItemId: number;
 
     @ApiProperty({
         description: 'User Id',

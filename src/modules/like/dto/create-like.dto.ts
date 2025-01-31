@@ -5,13 +5,13 @@ import { IsNotEmpty, IsNumber } from "class-validator";
 export class CreateLikeDto implements ICreateLikeRequest {
 
     @ApiProperty({
-        description: 'Product Id',
+        description: 'Product Item Id',
         default: 1,
         required: true
     })
     @IsNotEmpty()
     @IsNumber()
-    productId: number;
+    productItemId: number;
 
     @ApiProperty({
         description: 'User Id',
@@ -26,11 +26,11 @@ export class CreateLikeDto implements ICreateLikeRequest {
 export class CreateLikeDtoByToken implements Omit<ICreateLikeRequest, 'userId'> {
 
     @ApiProperty({
-        description: 'Product Id',
+        description: 'Product Item Id',
         default: 1,
         required: true
     })
     @IsNotEmpty()
     @IsNumber()
-    productId: number;
+    productItemId: number;
 }
