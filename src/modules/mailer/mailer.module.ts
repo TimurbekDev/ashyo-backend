@@ -7,4 +7,4 @@ import { MailerController } from './mailer.controller';
   controllers: [MailerController],
   providers: [MailerCustomService],
 })
-export class MailerModule {}
+export class CustomMailerModule {}
