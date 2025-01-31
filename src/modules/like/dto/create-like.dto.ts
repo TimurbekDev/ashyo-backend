@@ -22,3 +22,15 @@ export class CreateLikeDto implements ICreateLikeRequest {
     @IsNumber()
     userId: number;
 }
+
+export class CreateLikeDtoByToken implements Omit<ICreateLikeRequest, 'userId'> {
+
+    @ApiProperty({
+        description: 'Product Id',
+        default: 1,
+        required: true
+    })
+    @IsNotEmpty()
+    @IsNumber()
+    productId: number;
+}

@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Query, Req, UseGuards, ValidationPipe } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from '@decorators';
 import { ForgotPasswordDto, ResetPasswordDto, SignInDto, SignUpDto, VerifySendDto, VerifyUserDto } from './dto';
 
@@ -18,6 +18,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: "Sign in" })
+  
   @Post('sign-in')
   async signIn(@Body() signInDto: SignInDto) {
     return await this.authService.signIn(signInDto);

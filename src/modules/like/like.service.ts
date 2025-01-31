@@ -36,6 +36,18 @@ export class LikeService {
     };
   }
 
+  async findLikesUser(userId:number): Promise<ILikeResponse> {
+
+    const likes = await this.prismaService.like.findMany({
+      where : { userId }
+    });
+
+    return {
+      message: 'Users Likes',
+      likes
+    };
+  }
+
   async findOne(id: number): Promise<ILikeResponse> {
 
     const like = await this.prismaService.like.findFirst({ where: { id } });

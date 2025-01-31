@@ -18,8 +18,6 @@ export class CategoryService {
 
   async create(payload: CreateCategoryDto): Promise<ICategoryResponse> {
 
-    const parentId = +payload.parentId;
-
     const imageOtions = await this.uploadService.uploadFile({
       file: payload.image,
       destination: 'categories',
@@ -32,7 +30,6 @@ export class CategoryService {
     const newCategory = await this.prismaService.category.create({
       data: {
         ...payload,
-        parentId,
         image: imageOtions.imageUrl,
         icon: iconOptions.imageUrl,
       },
@@ -50,6 +47,7 @@ export class CategoryService {
     const categories = await this.prismaService.category.findMany({
       where: {
         name: filter.name ? { contains: filter.name, mode: 'insensitive' } : undefined,
+        parentId: null
       },
       take: filter.limit || 10,
       skip: ((filter.page || 1) - 1) * (filter.limit || 10),
@@ -63,7 +61,7 @@ export class CategoryService {
     });
 
     const totalCount = await this.prismaService.category.count({
-      where: { name: filter.name ? { contains: filter.name, mode: 'insensitive' } : undefined }
+      where: { name: filter.name ? { contains: filter.name, mode: 'insensitive' } : undefined , parentId: null }
     });
 
     return {

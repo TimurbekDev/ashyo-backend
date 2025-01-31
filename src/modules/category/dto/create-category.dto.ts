@@ -19,7 +19,8 @@ export class CreateCategoryDto implements ICreateCategoryRequest {
         required: false,
         type: Number,
     })
-    @IsNumber()
+    @IsNotEmpty()
+    @Transform(({ value }) => parseInt(value))
     parentId: number;
 
 

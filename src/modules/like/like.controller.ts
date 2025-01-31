@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Request } from '@nestjs/common';
 import { LikeService } from './like.service';
-import { CreateLikeDto, UpdateLikeDto } from './dto';
+import { CreateLikeDto, CreateLikeDtoByToken, UpdateLikeDto } from './dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Roles as UserRoles } from '@prisma/client';
 import { Roles } from '@decorators';
@@ -21,7 +21,27 @@ export class LikeController {
   }
 
   @ApiOperation({
-    summary : 'Get all likes'
+    summary : 'Create Like'
+  })
+  @Post('/user')
+  createLike(@Body() createLikeDto: CreateLikeDtoByToken,@Request() request:any) {
+
+    return this.likeService.create({
+      ...createLikeDto,
+      userId : request.user.userId
+    });
+  }
+
+  @ApiOperation({
+    summary : 'Get User likes'
+  })
+  @Get('/user')
+  findLikesByToken(@Request() request:any) {
+    return this.likeService.findLikesUser(request.user.userId);
+  }
+
+  @ApiOperation({
+    summary : 'Get All likes'
   })
   @Get()
   findAll() {

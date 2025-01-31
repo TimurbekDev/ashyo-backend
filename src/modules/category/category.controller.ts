@@ -23,7 +23,7 @@ export class CategoryController {
     { name: 'icon', maxCount: 1 },
   ]))
   create(
-    @Body() createCategoryDto: CreateCategoryDto,
+    @Body(new ValidationPipe({ whitelist : true})) createCategoryDto: CreateCategoryDto,
     @UploadedFiles() files: { image: Express.Multer.File, icon: Express.Multer.File }
   ): Promise<ICategoryResponse> {
     createCategoryDto.icon = files.icon;
@@ -37,7 +37,6 @@ export class CategoryController {
   @ApiQuery({
     name: 'name',
     required: false,
-    default: 'salom'
   })
   @ApiQuery({
     name: 'limit',

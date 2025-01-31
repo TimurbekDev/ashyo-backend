@@ -86,8 +86,8 @@ export class ProductService {
       where: whereCondition,
       skip: (page - 1) * limit,
       take: limit,
-      include:{
-        ProductItem : true
+      include: {
+        ProductItem: true
       }
     });
 
@@ -131,8 +131,8 @@ export class ProductService {
     );
 
     return {
-      message : 'Popular products',
-      products : productsWithDetails
+      message: 'Popular products',
+      products: productsWithDetails
     }
   }
 
