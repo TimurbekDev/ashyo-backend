@@ -9,8 +9,8 @@ import { ConnectSupport } from './dtos';
 @Controller('mailer')
 export class MailerController {
   constructor(private readonly mailerService: MailerCustomService) { }
-@Post()
-async sendSupportEmail(@Body() body: ConnectSupport) {
-  this.mailerService.Support(body)
-}
+  @Post()
+  async sendSupportEmail(@Body() body: ConnectSupport) {
+    this.mailerService.Support(body)
+  }
 }
