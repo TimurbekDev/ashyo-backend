@@ -181,7 +181,7 @@ model Like {
   id            Int         @id @default(autoincrement())
   productItem   ProductItem @relation("ProductItemLike", fields: [productItemId], references: [id], onDelete: Cascade)
   user          User        @relation("UserLike", fields: [userId], references: [id], onDelete: Cascade)
-  productItemId Int
+  productItemId Int @default(1)
   userId        Int
 }
 
