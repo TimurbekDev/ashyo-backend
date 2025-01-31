@@ -25,7 +25,7 @@ export class AuthService {
 
   async signUp(payload: ISignUpRequest) {
 
-    const existUser = await this.prismaService.user.findFirst({where: {email: payload.email}});
+    const existUser = await this.prismaService.user.findFirst({ where: { email: payload.email } });
 
     if (existUser) throw new BadRequestException('Email already in use');
     payload.password = await hash(payload.password, HASH_SALT);
@@ -47,7 +47,6 @@ export class AuthService {
       userId: newUser.id,
       role: newUser.role,
     })
-
 
     return {
       user: newUser,
@@ -78,7 +77,6 @@ export class AuthService {
     }
   }
 
-
   async forgotPassword(email: string) {
     const user = await this.userService.findByEmail(email)
     if (!user)
@@ -95,9 +93,9 @@ export class AuthService {
     await this.redisService.setByText({
       key: user.email,
       value: +otp,
-      time: 1000*60*2
+      time: 1000 * 60 * 2
     })
-    
+
 
 
     return {
@@ -106,7 +104,7 @@ export class AuthService {
   }
 
   async resetPassword(payload: IResetPasswordRequest) {
-    const user = await this.prismaService.user.findFirst({where: {email: payload.email}});
+    const user = await this.prismaService.user.findFirst({ where: { email: payload.email } });
 
     if (!user)
       throw new NotFoundException('User not found')
@@ -117,7 +115,7 @@ export class AuthService {
       throw new BadRequestException('OTP doesnt match')
 
     await this.prismaService.user.update({
-      where: {email: user.email},
+      where: { email: user.email },
       data: {
         password: await hash(payload.password, HASH_SALT)
       }
@@ -127,50 +125,47 @@ export class AuthService {
     }
   }
 
+  async sendVerification(payload: VerifySendDto): Promise<{ message: string, email: string }> {
 
-  async sendVerification(payload: VerifySendDto): Promise<{message: string,email: string}>{
+    const user = await this.userService.findByEmail(payload.email)
+    if (!user) {
+      throw new NotFoundException("Verification failed, User not found")
+    }
 
-      const user = await this.userService.findByEmail(payload.email)
-      if(!user){
-        throw new NotFoundException("Verification failed, User not found")
-      }
+    if (user.isVerified) {
+      throw new BadRequestException("User already verified")
+    }
 
-      if(user.isVerified){
-        throw new BadRequestException("User already verified")
-      }
+    const tokens = await this.jwtCustomService.generateTokens({
+      userId: user.id,
+      role: user.role,
+    })
 
-      const tokens = await this.jwtCustomService.generateTokens({
-        userId: user.id,
-        role: user.role,
-      })
+    const verifyUrl = `${this.configService.get<string>("baseUrl.BASE_URL")}/api/auth/verify-user?token=${tokens.access}&id=${user.id}`;
 
-      const verifyUrl = `${this.configService.get<string>("baseUrl.BASE_URL")}/api/auth/verify-user?token=${tokens.access}&id=${user.id}`;
-
-      await this.mailerService.VerficationMail({
-        text: verifyUrl,
-        to: user.email,
-        subject: `Hi ${user.fullName} please click Verify me button`
-      })
+    await this.mailerService.VerficationMail({
+      text: verifyUrl,
+      to: user.email,
+      subject: `Hi ${user.fullName} please click Verify me button`
+    })
 
 
-      
-      return {
-        message: "Verification sended succesfully, check email",
-        email: user.email
-      }
-      
+
+    return {
+      message: "Verification sended succesfully, check email",
+      email: user.email
+    }
+
   }
 
-
-
-  async verifyUser(payload: VerifyUserDto):Promise<{message: string}>{
-    await this.jwtCustomService.verifyToken(payload.token,TokenType.Access)
+  async verifyUser(payload: VerifyUserDto): Promise<{ message: string }> {
+    await this.jwtCustomService.verifyToken(payload.token, TokenType.Access)
     const user = await this.userService.findOne(Number(payload.id))
-    if(!user){
+    if (!user) {
       throw new NotFoundException("Verification failed, User not found")
     }
     await this.prismaService.user.update({
-      where: {id: Number(payload.id)},
+      where: { id: Number(payload.id) },
       data: {
         isVerified: true,
       }
@@ -181,8 +176,24 @@ export class AuthService {
     }
   }
 
+  async refreshToken(refreshToken: string) {
 
+    const payload = await this.jwtCustomService.verifyToken(refreshToken, TokenType.Refresh);
+    const user = (await this.userService.findOne(payload.userId)).user
+    if (!user)
+      throw new BadRequestException('email or password invalid')
 
+    const tokens = await this.jwtCustomService.generateTokens({
+      userId: user.id,
+      role: user.role,
+    })
+
+    return {
+      user,
+      access_token: tokens.access,
+      refresh_token: tokens.refresh
+    }
+  }
 
   #generateOtp = (length = 6) => {
     const digits = '0123456789';
@@ -193,6 +204,3 @@ export class AuthService {
     return otp;
   }
 }
-
-
-
