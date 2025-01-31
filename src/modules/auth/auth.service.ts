@@ -138,10 +138,7 @@ export class AuthService {
       if(user.isVerified){
         throw new BadRequestException("User already verified")
       }
-      const userVerifySendTime = await this.redisService.getByText(user.email)
-      if(userVerifySendTime){
-        throw new BadRequestException("Sorry, your attempt limit has been reached. Please try again later.")
-      }
+
       const tokens = await this.jwtCustomService.generateTokens({
         userId: user.id,
         role: user.role,
@@ -155,11 +152,7 @@ export class AuthService {
         subject: `Hi ${user.fullName} please click Verify me button`
       })
 
-      await this.redisService.setByText({
-        key: user.email,
-        value: 1245,
-        time: 60*30,
-      })
+
       
       return {
         message: "Verification sended succesfully, check email",

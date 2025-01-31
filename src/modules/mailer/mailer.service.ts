@@ -101,4 +101,39 @@ export class MailerCustomService {
     
   }
 
+
+  async Support(payload: ISendMailPayload){
+    try {
+      await this.mailerService.sendMail({
+        to: this.configService.get<string>('email.support'),
+        from: this.configService.get<string>('email.user'),
+        subject: 'New Support Request',
+        html: `
+          <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; text-align: center;">
+            <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+              <h1 style="font-size: 24px; color: #333333;">New Support Request</h1>
+              <p style="color: #666666; font-size: 16px;"><strong>Name:</strong> ${payload.name}</p>
+              <p style="color: #666666; font-size: 16px;"><strong>Surname:</strong> ${payload.surname}</p>
+              <p style="color: #666666; font-size: 16px;"><strong>Email:</strong> ${payload.email}</p>
+              <p style="color: #666666; font-size: 16px;"><strong>Phone:</strong> ${payload.phone}</p>
+              <p style="color: #666666; font-size: 16px; margin-top: 20px;"><strong>Message:</strong></p>
+              <p style="color: #333333; font-size: 16px; background-color: #f1f1f1; padding: 15px; border-radius: 4px;">${payload.text}</p>
+              <hr style="border: none; border-top: 1px solid #eeeeee; margin: 20px 0;" />
+              <p style="color: #999999; font-size: 14px;">Message sent on: ${new Date().toLocaleString()}</p>
+              <p style="color: #aaaaaa; font-size: 12px;">Ashyo Support Team</p>
+            </div>
+          </div>
+        `,
+      });
+    } catch (error) {
+      throw new ConflictException(error.message);
+    }
+    
+    
+  }
+
+
+
+
+
 }
