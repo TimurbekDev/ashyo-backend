@@ -46,6 +46,23 @@ export class AddressService {
     };
   }
 
+  async findAllByUser(userId:number): Promise<IAddressResponse> {
+
+    const allAddress = await this.prismaService.address.findMany({
+      include: {
+        city: true,
+        user: true,
+        village: true
+      },
+      where : { userId }
+    });
+
+    return {
+      message: 'Return all address',
+      addresses: allAddress
+    };
+  }
+
   async findOne(id: number): Promise<IAddressResponse> {
     const address = await this.prismaService.address.findUnique({
       where: { id }
