@@ -55,7 +55,6 @@ export class CreateProductItemDto implements ICreatePrRequest {
         description: 'Varaions id',
         type: [Number],
     })
-    @IsArray()
     @Transform(({ value }) => {
         if (!value) return [];
         if (Array.isArray(value)) {
