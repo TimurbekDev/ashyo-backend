@@ -6,40 +6,43 @@ import { Roles as UserRoles } from '@prisma/client';
 import { Roles } from '@decorators';
 
 @ApiTags('Address')
-@Roles(UserRoles.Admin,UserRoles.User)
 @ApiBearerAuth('auth')
 @Controller('address')
 export class AddressController {
 
   constructor(private readonly addressService: AddressService) { }
 
+  @Roles(UserRoles.Admin)
   @ApiOperation({ summary: "Create new address" })
   @Post()
   create(@Body() createAddressDto: CreateAddressDto) {
     return this.addressService.create(createAddressDto);
   }
 
+  @Roles(UserRoles.Admin, UserRoles.User)
   @ApiOperation({ summary: "Create new address by user" })
   @Post()
   createByUser(
     @Body() createAddressDto: CreateAddressDto,
-    @Request() request:any
+    @Request() request: any
   ) {
     return this.addressService.create({
       ...createAddressDto,
-      userId : request.user.userId
+      userId: request.user.userId
     });
   }
 
+  @Roles(UserRoles.Admin)
   @ApiOperation({ summary: "Get all address" })
   @Get()
   findAll() {
     return this.addressService.findAll();
   }
 
+  @Roles(UserRoles.Admin, UserRoles.User)
   @ApiOperation({ summary: "Get all user address" })
   @Get()
-  findAllByUser(@Request() request:any) {
+  findAllByUser(@Request() request: any) {
     return this.addressService.findAllByUser(request.user.userId);
   }
 
@@ -49,6 +52,7 @@ export class AddressController {
     return this.addressService.findOne(id);
   }
 
+  @Roles(UserRoles.Admin, UserRoles.User)
   @ApiOperation({ summary: "Update address by id" })
   @Patch(':id')
   update(@Param('id', ParseIntPipe) id: number, @Body() updateAddressDto: UpdateAddressDto) {
@@ -60,7 +64,7 @@ export class AddressController {
     });
   }
 
-
+  @Roles(UserRoles.Admin, UserRoles.User)
   @ApiOperation({ summary: "Delete address by id" })
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
