@@ -8,7 +8,7 @@ export class MailerCustomService {
   constructor(
     @Inject(ConfigService) private configService: ConfigService,
     @Inject(MailerService) private mailerService: MailerService,
-  ) {}
+  ) { }
 
   async sendOTP(payload: ISendMailPayload): Promise<void> {
 
@@ -37,7 +37,7 @@ export class MailerCustomService {
       throw new ConflictException(error.message);
     }
   }
-  
+
 
 
   async CreatedUserMessage(payload: ISendMailPayload): Promise<void> {
@@ -66,10 +66,10 @@ export class MailerCustomService {
     } catch (error) {
       throw new ConflictException(error.message);
     }
-    
+
   }
 
-  async VerficationMail(payload: ISendMailPayload){
+  async VerficationMail(payload: ISendMailPayload) {
     try {
       await this.mailerService.sendMail({
         to: payload.to,
@@ -97,16 +97,16 @@ export class MailerCustomService {
     } catch (error) {
       throw new ConflictException(error.message);
     }
-    
-    
+
+
   }
 
 
-  async Support(payload: ISendMailPayload){
+  async Support(payload: ISendMailPayload) {
+    
     try {
       await this.mailerService.sendMail({
         to: this.configService.get<string>('email.support'),
-        from: this.configService.get<string>('email.user'),
         subject: 'New Support Request',
         html: `
           <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; text-align: center;">
@@ -125,15 +125,12 @@ export class MailerCustomService {
           </div>
         `,
       });
+
+      return {
+        message : 'Thank You'
+      }
     } catch (error) {
       throw new ConflictException(error.message);
     }
-    
-    
   }
-
-
-
-
-
 }

@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { MailerCustomService } from './mailer.service';
 import { ConnectSupport } from './dtos';
+import { Public } from '@decorators';
 
 
 
@@ -9,8 +10,9 @@ import { ConnectSupport } from './dtos';
 @Controller('mailer')
 export class MailerController {
   constructor(private readonly mailerService: MailerCustomService) { }
-@Post()
-async sendSupportEmail(@Body() body: ConnectSupport) {
-  this.mailerService.Support(body)
-}
+  @Public()
+  @Post()
+  async sendSupportEmail(@Body() body: ConnectSupport) {
+    return this.mailerService.Support(body)
+  }
 }
