@@ -30,3 +30,24 @@ export class CreateAddressDto implements ICreateAddressRequest {
     @IsNumber()
     userId: number;
 }
+
+
+export class CreateAddressByUserDto implements Omit<ICreateAddressRequest,'userId'> {
+    @ApiProperty({
+        required : true,
+        description : 'Enter City Id ',
+        default : 1
+    })
+    @IsNotEmpty()
+    @IsNumber()
+    cityId: number;
+
+    @ApiProperty({
+        required : true,
+        description : 'Enter Village Id ',
+        default : 1
+    })
+    @IsNotEmpty()
+    @IsNumber()
+    villageId: number;
+}

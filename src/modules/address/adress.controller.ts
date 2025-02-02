@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Request } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AddressService } from './adress.service';
 import { CreateAddressDto, UpdateAddressDto } from './dto';
@@ -19,10 +19,28 @@ export class AddressController {
     return this.addressService.create(createAddressDto);
   }
 
+  @ApiOperation({ summary: "Create new address by user" })
+  @Post()
+  createByUser(
+    @Body() createAddressDto: CreateAddressDto,
+    @Request() request:any
+  ) {
+    return this.addressService.create({
+      ...createAddressDto,
+      userId : request.user.userId
+    });
+  }
+
   @ApiOperation({ summary: "Get all address" })
   @Get()
   findAll() {
     return this.addressService.findAll();
+  }
+
+  @ApiOperation({ summary: "Get all user address" })
+  @Get()
+  findAllByUser(@Request() request:any) {
+    return this.addressService.findAllByUser(request.user.userId);
   }
 
   @ApiOperation({ summary: "Get address by id" })
