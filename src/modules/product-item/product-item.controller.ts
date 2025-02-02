@@ -6,6 +6,7 @@ import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiQuery, ApiTags } from '@ne
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Roles as UserRoles } from '@prisma/client';
 import { Public, Roles } from '@decorators';
+import { GetAllPrItemsQuery } from './dto';
 
 @ApiTags('Product-Items')
 @Controller('product-item')
@@ -24,7 +25,8 @@ export class ProductItemController {
     @Body(new ValidationPipe({whitelist : true})) createProductItemDto: CreateProductItemDto,
     @UploadedFile() file: Express.Multer.File
   ) {
-    createProductItemDto.image = file
+    createProductItemDto.image = file;
+    console.log(createProductItemDto);
     return this.productItemService.create(createProductItemDto);
   }
 
@@ -32,22 +34,47 @@ export class ProductItemController {
   @Public()
   @Get()
   @ApiQuery({
+    description: 'Varaion-Options id',
+    name : 'varationOptionIds',
+    required : false,
+    type: [Number],
+  })
+  @ApiQuery({
+    type: String,
+    description: 'search',
+    name: "search",
+    required: false
+  })
+  @ApiQuery({
     type: Number,
-    description: 'page',
-    name: 'page',
-    required: true
+    description: "maxPrice",
+    name: "maxPrice",
+    required: false,
+  })
+  @ApiQuery({
+    type: Number,
+    description: "minPrice",
+    name: "minPrice",
+    required: false,
   })
   @ApiQuery({
     type: Number,
     description: 'limit',
     name: 'limit',
+    default: 100,
+    required: true
+  })
+  @ApiQuery({
+    type: Number,
+    description: 'page',  
+    name: 'page',
+    default: 1,
     required: true
   })
   findAll(
-    @Query('page', ParseIntPipe) page: number,
-    @Query('limit', ParseIntPipe) limit: number,
+    @Query(new ValidationPipe({ whitelist: true })) query:GetAllPrItemsQuery,
   ) {
-    return this.productItemService.findAll({ page, limit });
+    return this.productItemService.findAll(query);
   }
 
   @ApiOperation({ summary : 'Get product-item by id'})

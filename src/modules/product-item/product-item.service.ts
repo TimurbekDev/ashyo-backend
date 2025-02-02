@@ -23,7 +23,7 @@ export class ProductItemService {
     delete payload.varations;
 
     await this.productService.findOne(payload.productId);
-    
+
     await this.colorService.findOne(payload.colorId)
 
     const image = await this.uploadService.uploadFile({
@@ -38,19 +38,21 @@ export class ProductItemService {
         price: payload.price,
         name: payload.name,
         image: image.imageUrl,
-        colorId : payload.colorId
+        colorId: payload.colorId
       }
     });
 
-    varationOptionIds.map(async (id) => {
-      
-      await this.prismaService.productOptions.create({
-        data: {
-          productItemId: productItem.id,
-          variantOptionId: id
-        }
-      });      
-    })
+    if (varationOptionIds && varationOptionIds.length > 1) {
+      varationOptionIds.map(async (id) => {
+
+        await this.prismaService.productOptions.create({
+          data: {
+            productItemId: productItem.id,
+            variantOptionId: id
+          }
+        });
+      })
+    }
 
     return {
       message: 'ProductItem created',
@@ -59,32 +61,70 @@ export class ProductItemService {
   }
 
   async findAll(query: IGetAllQuery): Promise<IProductItemResponse> {
-
+    const where: any = {};
+  
+    if (query.search) {
+      where.OR = [
+        { name: { contains: query.search, mode: "insensitive" } },
+        { 
+          product: {
+            OR: [
+              { name: { contains: query.search, mode: "insensitive" } },
+              { category: { name: { contains: query.search, mode: "insensitive" } } }
+            ]
+          }
+        }
+      ];
+    }
+  
+    if (query.minPrice !== undefined || query.maxPrice !== undefined) {
+      where.price = {};
+      if (query.minPrice !== undefined) where.price.gte = query.minPrice;
+      if (query.maxPrice !== undefined) where.price.lte = query.maxPrice;
+    }
+  
+    if (query.varationOptionIds && query.varationOptionIds.length > 0) {
+      where.productOptions = {
+        some: {
+          variantOptionId: { in: query.varationOptionIds }
+        }
+      };
+    }
+  
     const productItems = await this.prismaService.productItem.findMany({
-      skip: (query.page - 1) * 10,
+      where,
+      skip: (query.page - 1) * query.limit,
       take: query.limit,
-      include : {
-        productOptions : {
-          select : {
-            variantOption : {
-              select : {
-                value : true,
-                varation : {
-                  select : {
-                    name : true
-                  }
-                }
+      include: {
+        product: {
+          include: { category: true }
+        },
+        productOptions: {
+          select: {
+            variantOption: {
+              select: {
+                value: true,
+                varation: { select: { name: true } }
               }
             }
           }
         }
       }
     });
-
+  
+    const formattedItems = productItems.map(item => ({
+      ...item,
+      variations: item.productOptions.map(opt => ({
+        name: opt.variantOption.varation.name,
+        value: opt.variantOption.value
+      })),
+      productOptions: undefined
+    }));
+  
     return {
       message: 'All Product Items',
-      total: await this.prismaService.productItem.count(),
-      productItems,
+      total: await this.prismaService.productItem.count({ where }),
+      productItems: formattedItems,
     };
   }
 
