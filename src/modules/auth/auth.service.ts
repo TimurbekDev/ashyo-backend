@@ -9,6 +9,7 @@ import { PrismaService } from '@prisma';
 import { HASH_SALT } from '@config';
 import { VerifySendDto, VerifyUserDto } from './dto';
 import { ConfigService } from '@nestjs/config';
+import { CartService } from '../cart';
 
 
 
@@ -20,7 +21,8 @@ export class AuthService {
     @Inject(JwtCustomService) private jwtCustomService: JwtCustomService,
     @Inject(RedisCacheService) private redisService: RedisCacheService,
     @Inject(MailerCustomService) private mailerService: MailerCustomService,
-    @Inject(ConfigService) private configService: ConfigService
+    @Inject(ConfigService) private configService: ConfigService,
+    @Inject(CartService) private cartService: CartService,
   ) { }
 
   async signUp(payload: ISignUpRequest) {
@@ -47,6 +49,8 @@ export class AuthService {
       userId: newUser.id,
       role: newUser.role,
     })
+
+    await this.cartService.create({userId: newUser.id})
 
     return {
       user: newUser,

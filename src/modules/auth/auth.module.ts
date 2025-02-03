@@ -9,9 +9,10 @@ import { JwtService } from '@nestjs/jwt';
 import { UploadService } from '../upload';
 import { RedisCacheService } from 'src/redis/redis.service';
 import { MailerCustomService } from '../mailer';
+import { CartService } from '../cart';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService,UserService,PrismaService,JwtCustomService,JwtService,ConfigService,UploadService,RedisCacheService,MailerCustomService,ConfigService]
+  providers: [CartService,AuthService,UserService,PrismaService,JwtCustomService,JwtService,ConfigService,UploadService,RedisCacheService,MailerCustomService,ConfigService]
 })
 export class AuthModule {}

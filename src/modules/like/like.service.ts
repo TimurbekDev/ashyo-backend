@@ -17,7 +17,7 @@ export class LikeService {
 
     await this.productItemService.findOne(payload.productItemId);
     await this.userService.findOne(payload.userId);
-
+    
     const like = await this.prismaService.like.create({ data: payload });
 
     return {
