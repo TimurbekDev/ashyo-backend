@@ -50,8 +50,7 @@ export class AuthService {
       role: newUser.role,
     })
 
-    await this.cartService.create({userId: newUser.id})
-
+    const newCart = await this.cartService.create({userId: newUser.id})
     return {
       user: newUser,
       access_token: tokens.access,

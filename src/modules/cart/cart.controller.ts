@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Request } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateCartDto, UpdateCartDto } from './dto';
 import { CartService } from './cart.service';
@@ -26,6 +26,15 @@ export class CartController {
   findAll() {
     return this.cartService.findAll();
   }
+
+  @ApiOperation({ summary: 'Get cart by user id' })
+  @Get("/user")
+  findCartByUserId(
+    @Request() request: any
+  ) {
+    return this.cartService.findCartByUserId(request.user.userId);
+  }
+
 
 
   @ApiOperation({ summary: 'Get cart by id' })

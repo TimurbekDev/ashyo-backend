@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma';
-import { ICartItemResponse, ICreateCartItemRequest, IUpdateCartItemRequest } from './interfaces';
+import { ICartItemResponse, ICreateCartItemByUserID, ICreateCartItemRequest, IUpdateCartItemRequest } from './interfaces';
 import { ProductItemService } from '../product-item';
 import { CartService } from '../cart/cart.service';
 
@@ -18,13 +18,32 @@ export class CartItemService {
     await this.productItemService.findOne(payload.productItemId);
     await this.cartService.findOne(payload.cartId);
 
-    const cartItem = await this.prismaService.cartItem.create({ data: payload });
 
+    const cartItem = await this.prismaService.cartItem.create({ data: payload });
+    
     return {
       message: 'CartItem created',
       cartItem
     };
   }
+
+  async createCartItemByUserId(payload: ICreateCartItemByUserID): Promise<ICartItemResponse> {
+    const cart = await this.cartService.findCartByUserId(payload.userId)
+    const cartId = cart.cart[0].id
+    const cartItem = await this.prismaService.cartItem.create({ 
+      data: {
+        productItemId: payload.productItemId,
+        cartId: cartId,
+        count: payload.count
+
+    } });
+    return {
+      message: 'CartItem created',
+      cartItem
+    };
+  }
+
+
 
   async findAll(): Promise<ICartItemResponse> {
 

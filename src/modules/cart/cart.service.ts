@@ -22,6 +22,18 @@ export class CartService {
     };
   }
 
+
+  async findCartByUserId(userId: number): Promise<{ message: string, cart: Cart[] }> {
+    const allCart = await this.prismaService.cart.findMany({where: {userId}, include: {cartItems: true}});
+
+    return {
+      message: 'Return all Cart',
+      cart: allCart
+    };
+  }
+
+
+
   async findAll(): Promise<{ message: string, cart: Cart[] }> {
 
     const allCart = await this.prismaService.cart.findMany();
@@ -37,7 +49,7 @@ export class CartService {
     cart: Cart
   }> {
     const cart = await this.prismaService.cart.findUnique({
-      where: { id }
+      where: { id  }
     });
 
     return {

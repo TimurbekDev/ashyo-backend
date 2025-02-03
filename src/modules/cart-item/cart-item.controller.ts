@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Request } from '@nestjs/common';
 import { CartItemService } from './cart-item.service';
 import { CreateCartItemDto } from './dto/create-cart-item.dto';
 import { UpdateCartItemDto } from './dto/update-cart-item.dto';
 import { Roles as UserRoles } from '@prisma/client';
 import { Roles } from '@decorators';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { CreateCartItemByUserId } from './dto/create-carti-byuserid.dto';
+
 
 @Roles(UserRoles.Admin, UserRoles.User)
 @ApiBearerAuth('auth')
@@ -20,6 +22,19 @@ export class CartItemController {
   create(@Body() createCartItemDto: CreateCartItemDto) {
     return this.cartItemService.create(createCartItemDto);
   }
+
+
+  @ApiOperation({
+    summary: 'Create cart-item'
+  })
+  @Post("/byUser")
+  createCartItemByUserId(
+    @Body() createCartItemDto: CreateCartItemByUserId,
+    @Request() request: any
+  ) {
+    return this.cartItemService.createCartItemByUserId({...createCartItemDto,userId: request.user.userId});
+  }
+
 
   @ApiOperation({
     summary: 'Get all cart-items'
