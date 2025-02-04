@@ -24,7 +24,7 @@ export class CartService {
 
 
   async findCartByUserId(userId: number): Promise<{ message: string, cart: Cart[] }> {
-    const allCart = await this.prismaService.cart.findMany({where: {userId}, include: {cartItems: true}});
+    const allCart = await this.prismaService.cart.findMany({where: {userId}, include: {cartItems: {include: {productItem: true}}, }});
 
     return {
       message: 'Return all Cart',
