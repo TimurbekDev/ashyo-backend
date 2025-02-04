@@ -194,7 +194,6 @@ export class AuthService {
     return {
       user,
       access_token: tokens.access,
-      refresh_token: tokens.refresh
     }
   }
 

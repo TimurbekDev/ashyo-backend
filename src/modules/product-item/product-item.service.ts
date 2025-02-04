@@ -70,7 +70,8 @@ export class ProductItemService {
           product: {
             OR: [
               { name: { contains: query.search, mode: "insensitive" } },
-              { category: { name: { contains: query.search, mode: "insensitive" } } }
+              { category: { name: { contains: query.search, mode: "insensitive" } } },
+              { category: { parent : { name: { contains: query.search, mode: "insensitive" } } }},
             ]
           }
         }
@@ -97,7 +98,11 @@ export class ProductItemService {
       take: query.limit,
       include: {
         product: {
-          include: { category: true }
+          include: { category: {
+            include : {
+              parent : true
+            }
+          } }
         },
         productOptions: {
           select: {
