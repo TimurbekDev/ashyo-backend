@@ -13,6 +13,7 @@ export class MailerController {
   @Public()
   @Post()
   async sendSupportEmail(@Body() body: ConnectSupport) {
+    console.log(body)
     return this.mailerService.Support(body)
   }
 }

@@ -105,8 +105,11 @@ export class MailerCustomService {
   async Support(payload: ISendMailPayload) {
     
     try {
+      console.log(payload)
+      console.log(this.configService.get<string>('email.support'))
       await this.mailerService.sendMail({
         to: this.configService.get<string>('email.support'),
+        from: this.configService.get<string>('email.user'),
         subject: 'New Support Request',
         html: `
           <div style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 20px; text-align: center;">
