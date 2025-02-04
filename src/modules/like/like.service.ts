@@ -39,7 +39,8 @@ export class LikeService {
   async findLikesUser(userId:number): Promise<ILikeResponse> {
 
     const likes = await this.prismaService.like.findMany({
-      where : { userId }
+      where : { userId },
+      include: {productItem: true}
     });
 
     return {
